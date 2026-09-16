@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://bcglefdlncqyi"]
+
+[ext_resource type="Script" uid="uid://fsxm573qdbh6" path="res://client/login.gd" id="1_login"]
+
+[node name="login" type="Node2D" unique_id=715909240]
+script = ExtResource("1_login")
+
+[node name="label_username" type="Label" parent="." unique_id=1429384747]
+offset_left = 422.0
+offset_top = 193.0
+offset_right = 734.0
+offset_bottom = 220.0
+text = "Username:"
+
+[node name="input_username" type="LineEdit" parent="." unique_id=312311615]
+offset_left = 422.0
+offset_top = 224.0
+offset_right = 741.0
+offset_bottom = 275.0
+placeholder_text = "Type your username"
+
+[node name="label_email" type="Label" parent="." unique_id=422741742]
+offset_left = 422.0
+offset_top = 279.0
+offset_right = 734.0
+offset_bottom = 306.0
+text = "Email:"
+
+[node name="input_email" type="LineEdit" parent="." unique_id=1209876104]
+offset_left = 421.0
+offset_top = 306.0
+offset_right = 740.0
+offset_bottom = 357.0
+placeholder_text = "Type your email"
+
+[node name="label_pass" type="Label" parent="." unique_id=1103293821]
+offset_left = 421.0
+offset_top = 361.0
+offset_right = 733.0
+offset_bottom = 388.0
+text = "Password:"
+
+[node name="input_pass" type="LineEdit" parent="." unique_id=1854878024]
+offset_left = 423.0
+offset_top = 389.0
+offset_right = 742.0
+offset_bottom = 440.0
+placeholder_text = "Type your password"
+
+[node name="button_create_acc" type="Button" parent="." unique_id=1031804372]
+offset_left = 419.0
+offset_top = 468.0
+offset_right = 738.0
+offset_bottom = 524.0
+text = "Create An Account"
+
+[node name="debug" type="Label" parent="." unique_id=1058840605]
+offset_left = 421.0
+offset_top = 100.0
+offset_right = 900.0
+offset_bottom = 160.0
+autowrap_mode = 2
+
+[connection signal="pressed" from="button_create_acc" to="." method="_on_button_create_acc_pressed"]
