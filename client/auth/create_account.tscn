@@ -1,0 +1,139 @@
+[gd_scene format=3 uid="uid://4rbjnhmiipod"]
+
+[ext_resource type="Script" uid="uid://ck5bp764xt4xi" path="res://client/auth/create_account.gd" id="1_create_account"]
+[ext_resource type="PackedScene" uid="uid://dhd56c0gjjps" path="res://client/player/player.tscn" id="2_cwpj5"]
+[ext_resource type="PackedScene" uid="uid://csu2nqwhlsixs" path="res://client/player/character_customizer.tscn" id="3_hxtys"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_outer"]
+bg_color = Color(0.749, 0.878, 0.969, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.9411765, 0.9019608, 0.61960787, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.9490196, 0.8, 0.3019608, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_field"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.9490196, 0.8, 0.3019608, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
+bg_color = Color(0.9490196, 0.8, 0.3019608, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+
+[node name="create_account" type="Node2D" unique_id=324003326]
+script = ExtResource("1_create_account")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1886825673]
+
+[node name="OuterPanel" type="Panel" parent="CanvasLayer" unique_id=442653373]
+offset_right = 1152.0
+offset_bottom = 648.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_outer")
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/OuterPanel" unique_id=874482369]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 20.0
+offset_right = 1112.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "Character + Account Creation"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="btn_back" type="Button" parent="CanvasLayer/OuterPanel" unique_id=60322183]
+layout_mode = 0
+offset_left = 73.0
+offset_top = 25.0
+offset_right = 143.0
+offset_bottom = 60.0
+text = "Back"
+
+[node name="CharacterPanel" type="Panel" parent="CanvasLayer/OuterPanel" unique_id=157415224]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 100.0
+offset_right = 620.0
+offset_bottom = 600.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="CharacterCustomizer" parent="CanvasLayer/OuterPanel/CharacterPanel" unique_id=1238502484 instance=ExtResource("3_hxtys")]
+layout_mode = 1
+offset_left = 37.0
+offset_top = 87.0
+offset_right = -327.0
+offset_bottom = -75.0
+
+[node name="input_username" type="LineEdit" parent="CanvasLayer/OuterPanel/CharacterPanel" unique_id=1036643844]
+layout_mode = 0
+offset_left = 295.0
+offset_top = 396.0
+offset_right = 495.0
+offset_bottom = 436.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_field")
+placeholder_text = "Type your username"
+
+[node name="Player" parent="CanvasLayer/OuterPanel/CharacterPanel" unique_id=1571350742 instance=ExtResource("2_cwpj5")]
+position = Vector2(379, 211)
+scale = Vector2(0.7, 0.7)
+
+[node name="input_email" type="LineEdit" parent="CanvasLayer/OuterPanel" unique_id=1315285249]
+layout_mode = 0
+offset_left = 660.0
+offset_top = 180.0
+offset_right = 1080.0
+offset_bottom = 230.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_field")
+placeholder_text = "Email"
+
+[node name="input_pass" type="LineEdit" parent="CanvasLayer/OuterPanel" unique_id=634910586]
+layout_mode = 0
+offset_left = 660.0
+offset_top = 250.0
+offset_right = 1080.0
+offset_bottom = 300.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_field")
+placeholder_text = "Password"
+secret = true
+
+[node name="btn_create" type="Button" parent="CanvasLayer/OuterPanel" unique_id=800347633]
+layout_mode = 0
+offset_left = 660.0
+offset_top = 340.0
+offset_right = 1080.0
+offset_bottom = 390.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "Create an account"
+
+[node name="debug" type="Label" parent="CanvasLayer/OuterPanel" unique_id=1156320726]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 610.0
+offset_right = 1080.0
+offset_bottom = 648.0
+theme_override_colors/font_color = Color(0.373, 0.529, 0.898, 1)
+autowrap_mode = 2
+
+[connection signal="pressed" from="CanvasLayer/OuterPanel/btn_back" to="." method="_on_btn_back_pressed"]
+[connection signal="pressed" from="CanvasLayer/OuterPanel/btn_create" to="." method="_on_btn_create_pressed"]

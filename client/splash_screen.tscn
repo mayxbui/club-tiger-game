@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://6e4mn1ocssac"]
+
+[ext_resource type="Script" uid="uid://crd83syge7qgw" path="res://client/splash_screen.gd" id="1_6c2gy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6c2gy"]
+bg_color = Color(0.9411765, 0.9019608, 0.61960787, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+corner_detail = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cs1pr"]
+bg_color = Color(0.9411765, 0.9019608, 0.61960787, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="welcome" type="Node2D" unique_id=615202200]
+script = ExtResource("1_6c2gy")
+
+[node name="btn_create" type="Button" parent="." unique_id=391570104]
+offset_left = 500.0
+offset_top = 280.0
+offset_right = 700.0
+offset_bottom = 330.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_6c2gy")
+text = "Create an account"
+
+[node name="label_title" type="Label" parent="." unique_id=1234718361]
+offset_left = 555.0
+offset_top = 207.0
+offset_right = 647.0
+offset_bottom = 231.0
+text = "Club Tiger"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="btn_login" type="Button" parent="." unique_id=1270162039]
+offset_left = 500.0
+offset_top = 350.0
+offset_right = 700.0
+offset_bottom = 400.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_cs1pr")
+text = "Login"
+
+[connection signal="pressed" from="btn_create" to="." method="_on_btn_create_pressed"]
+[connection signal="pressed" from="btn_login" to="." method="_on_btn_login_pressed"]
