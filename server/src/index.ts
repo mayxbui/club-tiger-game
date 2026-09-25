@@ -1,45 +1,45 @@
 import "dotenv/config";
-import { WebSocket, WebSocketServer } from "ws";
+import{WebSocket, WebSocketServer} from "ws";
 import { createAccount, login } from "./auth.js";
 
+// Initialize the WebSocket server
 const PORT = Number(process.env.PORT ?? 3103);
+const wsServer = new WebSocketServer({
+    port: PORT 
+});
 
-const wss = new WebSocketServer({ port: PORT });
-
+// Function to send a message to a WebSocket client
 function send(socket: WebSocket, message: unknown) {
     socket.send(JSON.stringify(message));
 }
 
-wss.on("connection", (socket) => {
+// Handle new WebSocket connections and incoming messages
+wsServer.on("connection", (socket) => {
+    send(socket, { type: "connected", message: `You are now connected to the server` });
     socket.on("message", async (raw) => {
         let message: any;
-        try {
+        // Parse the incoming message and handle different message types
+        try{
             message = JSON.parse(raw.toString());
-        } catch {
-            send(socket, { type: "error", error: "Malformed message." });
-            return;
-        }
-
-        try {
-            switch (message.type) {
+            switch(message.type){
                 case "create_account": {
-                    const result = await createAccount(message.username, message.email, message.password);
-                    send(socket, { type: "create_account_result", ...result });
+                    const character = message.character ? message.character : {};
+                    const result = await createAccount(message.username, message.email, message.password, character);
+                    send(socket, {type: "create_account_result", ...result});
                     break;
                 }
                 case "login": {
-                    const result = await login(message.username, message.password);
-                    send(socket, { type: "login_result", ...result });
-                    break;
+                    const result = await login(message.username, message.password, Boolean(message.remember_me));
+                    send(socket, {type: "login_result", ...result});
+                    break;                    
                 }
                 default:
-                    send(socket, { type: "error", error: `Unknown message type: ${message.type}` });
+                    send(socket, {type: "error", error: `Unknown message type: ${message.type}`});
             }
-        } catch (err) {
-            console.error("Error handling message:", err);
-            send(socket, { type: "error", error: "Internal server error." });
+        } catch(err){
+            console.error("Error message:", err);
         }
     });
 });
 
-console.log(`Club Tiger server listening on ws://0.0.0.0:${PORT}`);
+console.log((new Date()) + `Club Tiger server listening on ${PORT}`);
