@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c7rpucjuj667a" path="res://client/player/player.gd" id="1_3qdwu"]
 [ext_resource type="Texture2D" uid="uid://q86c55hgybo4" path="res://client/assets/skin/shade0.png" id="2_iwtvl"]
-[ext_resource type="Texture2D" uid="uid://cok2ceqa1tug5" path="res://client/assets/hair/hair3.png" id="3_172lf"]
+[ext_resource type="Texture2D" uid="uid://bu18y2vbo6w1q" path="res://client/assets/hair/hair6.png" id="3_iwtvl"]
 [ext_resource type="Texture2D" uid="uid://o08tpym0vque" path="res://client/assets/eyes/eye2.png" id="4_iwtvl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ee1sm"]
@@ -23,8 +23,8 @@ hframes = 2
 region_rect = Rect2(145.07495, 1179.2516, 1871.925, 422.99597)
 
 [node name="Hair" type="Sprite2D" parent="Skeleton" unique_id=92792687]
-position = Vector2(-5, -99)
-texture = ExtResource("3_172lf")
+position = Vector2(9, -102)
+texture = ExtResource("3_iwtvl")
 region_rect = Rect2(1884, 71, 188, 233)
 
 [node name="Eye" type="Sprite2D" parent="Skeleton" unique_id=1261590039]
