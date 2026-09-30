@@ -49,7 +49,6 @@ func _on_network_message_received(data: Dictionary) -> void:
 	if data.get("success", false):
 		Session.token = token
 		Session.userId = int(data.get("userId", 0))
-		# username and character stay empty until the server's resume_session_result includes them.
 		Session.username = str(data.get("username", ""))
 		Session.character = data.get("character", {})
 		get_tree().change_scene_to_file("res://client/map/map.tscn")

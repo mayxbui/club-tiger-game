@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://dhd56c0gjjps"]
 
 [ext_resource type="Script" uid="uid://c7rpucjuj667a" path="res://client/player/player.gd" id="1_3qdwu"]
-[ext_resource type="Texture2D" uid="uid://dx2eqyji8ewsx" path="res://client/assets/skin/skin_spritesheet.png" id="2_iwtvl"]
-[ext_resource type="Texture2D" uid="uid://exumkcxbj78t" path="res://client/assets/hair/hair_sprite_sheet.png" id="3_172lf"]
-[ext_resource type="Texture2D" uid="uid://cu83sm1e4xuxi" path="res://client/assets/eyes/eyes_sprite_sheet.png" id="4_iwtvl"]
+[ext_resource type="Texture2D" uid="uid://q86c55hgybo4" path="res://client/assets/skin/shade0.png" id="2_iwtvl"]
+[ext_resource type="Texture2D" uid="uid://cok2ceqa1tug5" path="res://client/assets/hair/hair3.png" id="3_172lf"]
+[ext_resource type="Texture2D" uid="uid://o08tpym0vque" path="res://client/assets/eyes/eye2.png" id="4_iwtvl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ee1sm"]
 size = Vector2(187, 99)
@@ -18,29 +18,21 @@ shape = SubResource("RectangleShape2D_ee1sm")
 [node name="Skeleton" type="Node2D" parent="." unique_id=525518808]
 
 [node name="Skin" type="Sprite2D" parent="Skeleton" unique_id=804251127]
-position = Vector2(25.999996, -10.999999)
-scale = Vector2(0.9533333, 1)
 texture = ExtResource("2_iwtvl")
-hframes = 8
-frame = 6
+hframes = 2
 region_rect = Rect2(145.07495, 1179.2516, 1871.925, 422.99597)
 
 [node name="Hair" type="Sprite2D" parent="Skeleton" unique_id=92792687]
-position = Vector2(29.000006, -116.50001)
-scale = Vector2(0.9519999, 1.02)
+position = Vector2(-5, -99)
 texture = ExtResource("3_172lf")
-hframes = 6
-frame = 1
 region_rect = Rect2(1884, 71, 188, 233)
 
 [node name="Eye" type="Sprite2D" parent="Skeleton" unique_id=1261590039]
-position = Vector2(52, -108)
+position = Vector2(21, -97)
 texture = ExtResource("4_iwtvl")
-hframes = 5
-frame = 4
 region_rect = Rect2(328.98175, 519.45, 78.615906, 28.239807)
 
-[node name="Name" type="Label" parent="Skeleton" unique_id=1046048194]
+[node name="Username_label" type="Label" parent="Skeleton" unique_id=1046048194]
 offset_left = -83.0
 offset_top = 202.0
 offset_right = 124.0

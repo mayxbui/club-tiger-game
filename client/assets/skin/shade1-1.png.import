@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dx2eqyji8ewsx"
-path="res://.godot/imported/skin_spritesheet.png-f52ec2502fd8ba9ace7e383383492491.ctex"
+uid="uid://tnf4x6e3ij5t"
+path="res://.godot/imported/shade1-1.png-e2c41d37ef998be21a70fceef0ef690d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://client/assets/skin/skin_spritesheet.png"
-dest_files=["res://.godot/imported/skin_spritesheet.png-f52ec2502fd8ba9ace7e383383492491.ctex"]
+source_file="res://client/assets/skin/shade1-1.png"
+dest_files=["res://.godot/imported/shade1-1.png-e2c41d37ef998be21a70fceef0ef690d.ctex"]
 
 [params]
 
