@@ -2,23 +2,29 @@ extends Node2D
 
 const SESSION_FILE := "user://session.txt"
 
-# Listens for server replies while the sign-in screen is open.
+# Shows one message in LabelDebug and restarts TimerDebug, which clears it a few seconds later.
+func show_message(msg: String) -> void:
+	$LabelDebug.text = msg
+	$TimerDebug.start()
+
+# Listens for server replies while the sign-in screen is open, and clears LabelDebug when TimerDebug runs out.
 func _ready() -> void:
 	Network.message_received.connect(_on_message_received)
+	$TimerDebug.timeout.connect(func(): $LabelDebug.text = "")
 
 # Handles the server's login_result: goes to the map on success, shows the error otherwise.
 func _on_message_received(data: Dictionary) -> void:
 	# Server sends type "error" for crashes/malformed messages (e.g. DB failures)
 	if data.get("type") == "error":
-		$debug.text += "Server error: " + str(data.get("error")) + "\n"
-		$btn_login.disabled = false
+		show_message("Server error: " + str(data.get("error")) + "\n")
+		$BtnLogin.disabled = false
 		return
 	if data.get("type") != "login_result":
 		return
 
-	$btn_login.disabled = false
+	$BtnLogin.disabled = false
 	if data.get("success"):
-		$debug.text += "Logged in as " + str(data.get("username")) + "\n"
+		show_message("Logged in as " + str(data.get("username")) + "\n")
 		# Keep the login in the Session autoload so the map can use it after this scene is freed.
 		# JSON numbers arrive as floats, so userId is converted with int(); character holds skin/hair/eyes.
 		Session.token = str(data.get("token", ""))
@@ -26,7 +32,7 @@ func _on_message_received(data: Dictionary) -> void:
 		Session.username = str(data.get("username", ""))
 		Session.character = data.get("character", {})
 
-		if $checkbox_remember.button_pressed:
+		if $HBoxContainer/CheckboxRemember.button_pressed:
 			var file = FileAccess.open(SESSION_FILE, FileAccess.WRITE)
 			if file:
 				file.store_string(Session.token)
@@ -36,10 +42,10 @@ func _on_message_received(data: Dictionary) -> void:
 			# "Remember me" is off, so forget any session saved by an earlier login.
 			DirAccess.remove_absolute(SESSION_FILE)
 
-		get_tree().change_scene_to_file("res://client/map/map.tscn")
+		get_tree().change_scene_to_file("res://client/map/world_map.tscn")
 	else:
-		$debug.text += "Error: " + str(data.get("error")) + "\n"
-		$input_pass.clear()
+		show_message("Error: " + str(data.get("error")) + "\n")
+		$VBoxContainer/InputPassword.clear()
 
 # Opens the create-account screen.
 func _on_btn_create_pressed() -> void:
@@ -48,16 +54,16 @@ func _on_btn_create_pressed() -> void:
 
 # Checks the form, sends the login request to the server and waits for login_result.
 func _on_btn_login_pressed() -> void:
-	var username = $input_username.text.strip_edges()
-	var password = $input_pass.text
-	var remember = $checkbox_remember.button_pressed
+	var username = $VBoxContainer/InputUsername.text.strip_edges()
+	var password = $VBoxContainer/InputPassword.text
+	var remember = $HBoxContainer/CheckboxRemember.button_pressed
 
 	if username.is_empty() or password.is_empty():
-		$debug.text += "Please enter username and password.\n"
+		show_message("Please enter username and password.\n")
 		return
 
 	if not Network.is_connected_to_server():
-		$debug.text += "Not connected to server yet.\n"
+		show_message("Not connected to server yet.\n")
 		return
 
 	Network.send({
@@ -66,4 +72,8 @@ func _on_btn_login_pressed() -> void:
 		"password": password,
 		"remember_me": remember
 	})
-	$btn_login.disabled = true
+	$BtnLogin.disabled = true
+
+# Opens the reset-password screen.
+func _on_btn_forgot_pressed() -> void:
+	get_tree().change_scene_to_file("res://client/auth/reset_password.tscn")

@@ -8,10 +8,7 @@ extends Node
 #   - The server's SKIN_COUNT / HAIR_COUNT / EYES_COUNT in server/src/auth.ts must equal SKIN.size(),
 #     HAIR.size() and EYES.size() (4, 6, 5).
 
-# TODO: art - all four shades are now the same size (good), but 451 is odd: hframes = 2 splits it into two
-# 225.5 px poses, so each pose is cut mid-pixel and can look blurry or show a thin line from the other pose
-# (the customizer preview's get_width()/2 also rounds down to 225). Re-export at an EVEN width, e.g. 452x451.
-# Skins size: 451x451
+# Skins size: 454x425 (even width, so hframes = 2 splits it into two whole 227 px poses)
 const SKIN := [ # 2 frames each: walk + idle
 	preload("res://client/assets/skin/shade0.png"),
 	preload("res://client/assets/skin/shade1.png"),

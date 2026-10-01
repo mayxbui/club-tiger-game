@@ -17,8 +17,8 @@ func _ready() -> void:
 		_show_auth_buttons()
 		return
 
-	$btn_create.visible = false
-	$btn_login.visible = false
+	$VBoxContainer/BtnCreate.visible = false
+	$VBoxContainer/BtnLogin.visible = false
 	Network.message_received.connect(_on_network_message_received)
 
 	# Wait up to CONNECT_TIMEOUT_SECONDS for the connection, checking every CONNECT_CHECK_SECONDS.
@@ -34,8 +34,8 @@ func _ready() -> void:
 
 # Shows the create-account and sign-in buttons.
 func _show_auth_buttons() -> void:
-	$btn_create.visible = true
-	$btn_login.visible = true
+	$VBoxContainer/BtnCreate.visible = true
+	$VBoxContainer/BtnLogin.visible = true
 
 # Handles resume_session_result: goes to the map if the saved session is still valid, otherwise forgets it.
 func _on_network_message_received(data: Dictionary) -> void:
@@ -51,7 +51,9 @@ func _on_network_message_received(data: Dictionary) -> void:
 		Session.userId = int(data.get("userId", 0))
 		Session.username = str(data.get("username", ""))
 		Session.character = data.get("character", {})
-		get_tree().change_scene_to_file("res://client/map/map.tscn")
+		# TODO: FIX - map.tscn was deleted, so a remembered login fails here and the player is stuck on the splash
+		# screen. Change the path to "res://client/map/world_map.tscn" (same as signin.gd and create_account.gd).
+		get_tree().change_scene_to_file("res://client/map/world_map.tscn")
 	else:
 		DirAccess.remove_absolute(SESSION_FILE)
 		_show_auth_buttons()

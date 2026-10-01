@@ -12,15 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_chq4n")
 
-[node name="Panel" type="Panel" parent="." unique_id=1338895446]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=2135654336]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2135654336]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,14 +21,14 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
 
-[node name="SpriteSelector" parent="Panel/VBoxContainer" unique_id=747671734 instance=ExtResource("2_m4524")]
+[node name="SpriteSelector" parent="VBoxContainer" unique_id=747671734 instance=ExtResource("2_m4524")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SpriteSelector2" parent="Panel/VBoxContainer" unique_id=1607263598 instance=ExtResource("2_m4524")]
+[node name="SpriteSelector2" parent="VBoxContainer" unique_id=1607263598 instance=ExtResource("2_m4524")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SpriteSelector3" parent="Panel/VBoxContainer" unique_id=1085624515 instance=ExtResource("2_m4524")]
+[node name="SpriteSelector3" parent="VBoxContainer" unique_id=1085624515 instance=ExtResource("2_m4524")]
 layout_mode = 2
 size_flags_vertical = 3

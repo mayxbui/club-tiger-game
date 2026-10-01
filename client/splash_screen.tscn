@@ -1,6 +1,12 @@
 [gd_scene format=3 uid="uid://6e4mn1ocssac"]
 
 [ext_resource type="Script" uid="uid://crd83syge7qgw" path="res://client/splash_screen.gd" id="1_6c2gy"]
+[ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="2_cs1pr"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_6c2gy"]
+font = ExtResource("2_cs1pr")
+font_size = 88
+font_color = Color(1, 0.8980392, 0.2901961, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6c2gy"]
 bg_color = Color(0.9411765, 0.9019608, 0.61960787, 1)
@@ -17,36 +23,47 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
-[node name="welcome" type="Node2D" unique_id=615202200]
+[node name="SplashScreen" type="Node2D" unique_id=615202200]
 script = ExtResource("1_6c2gy")
 
-[node name="btn_create" type="Button" parent="." unique_id=391570104]
-offset_left = 500.0
-offset_top = 280.0
-offset_right = 700.0
-offset_bottom = 330.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_6c2gy")
-text = "Create an account"
-
-[node name="label_title" type="Label" parent="." unique_id=1234718361]
-offset_left = 555.0
-offset_top = 207.0
-offset_right = 647.0
-offset_bottom = 231.0
+[node name="LabelTitle" type="Label" parent="." unique_id=1234718361]
+offset_top = 168.0
+offset_right = 1152.0
+offset_bottom = 289.0
+theme_override_colors/font_color = Color(0.94140065, 0.8110374, 0.2642463, 1)
+theme_override_font_sizes/font_size = 88
 text = "Club Tiger"
+label_settings = SubResource("LabelSettings_6c2gy")
 horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
 
-[node name="btn_login" type="Button" parent="." unique_id=1270162039]
-offset_left = 500.0
-offset_top = 350.0
-offset_right = 700.0
-offset_bottom = 400.0
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=92850262]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 440.0
+offset_top = 320.0
+offset_right = 718.5
+offset_bottom = 427.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="BtnCreate" type="Button" parent="VBoxContainer" unique_id=391570104]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_6c2gy")
+text = "Create an account"
+
+[node name="BtnLogin" type="Button" parent="VBoxContainer" unique_id=1270162039]
+layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_cs1pr")
 text = "Login"
 
-[connection signal="pressed" from="btn_create" to="." method="_on_btn_create_pressed"]
-[connection signal="pressed" from="btn_login" to="." method="_on_btn_login_pressed"]
+[connection signal="pressed" from="VBoxContainer/BtnCreate" to="." method="_on_btn_create_pressed"]
+[connection signal="pressed" from="VBoxContainer/BtnLogin" to="." method="_on_btn_login_pressed"]

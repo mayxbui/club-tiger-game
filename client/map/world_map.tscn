@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://i6k0crfohrc1"]
+
+[ext_resource type="Texture2D" uid="uid://ckxynjwdid45p" path="res://client/assets/main-map.png" id="1_su6gu"]
+[ext_resource type="Script" uid="uid://c1ymvras8nhic" path="res://client/map/world_map.gd" id="1_vmchv"]
+[ext_resource type="PackedScene" uid="uid://dhd56c0gjjps" path="res://client/player/player.tscn" id="2_qgng5"]
+
+[node name="WorldMap" type="Node2D" unique_id=38426788]
+script = ExtResource("1_vmchv")
+
+[node name="Map" type="Sprite2D" parent="." unique_id=1215983187]
+position = Vector2(576, 366.99997)
+scale = Vector2(0.9505207, 0.95052075)
+texture = ExtResource("1_su6gu")
+metadata/_edit_group_ = true
+
+[node name="Map3" type="Sprite2D" parent="." unique_id=1581610486]
+position = Vector2(1549, 366.99994)
+scale = Vector2(0.9505209, 0.9505209)
+texture = ExtResource("1_su6gu")
+metadata/_edit_group_ = true
+
+[node name="Map2" type="Sprite2D" parent="." unique_id=489857421]
+position = Vector2(-398, 365.99997)
+scale = Vector2(0.95312494, 0.95312494)
+texture = ExtResource("1_su6gu")
+metadata/_edit_group_ = true
+
+[node name="Player" parent="." unique_id=1159748652 instance=ExtResource("2_qgng5")]
+position = Vector2(457, 285)
+scale = Vector2(0.345, 0.345)

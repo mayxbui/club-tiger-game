@@ -10,9 +10,9 @@ signal eyes_changed(id: int)
 #      `selection`, new signals, and connect those signals in create_account.gd like the other three.
 var selection := {"skin": 0, "hair": 0, "eyes": 0}
 @onready var selectors := {
-	"skin": $Panel/VBoxContainer/SpriteSelector,
-	"hair": $Panel/VBoxContainer/SpriteSelector2,
-	"eyes": $Panel/VBoxContainer/SpriteSelector3,
+	"skin": $VBoxContainer/SpriteSelector,
+	"hair": $VBoxContainer/SpriteSelector2,
+	"eyes": $VBoxContainer/SpriteSelector3,
 }
 
 

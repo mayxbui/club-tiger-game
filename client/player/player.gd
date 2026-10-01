@@ -14,7 +14,7 @@ extends CharacterBody2D
 
 const IDLE_FRAME := 0
 const WALK_FRAME := 1
-const STEP_SECONDS := 0.2
+const STEP_SECONDS := 0.1
 var step_timer := 0.0
 
 
@@ -29,7 +29,7 @@ func _physics_process(delta: float) -> void:
 		if step_timer >= STEP_SECONDS:
 			step_timer = 0.0
 			skin.frame = WALK_FRAME if skin.frame == IDLE_FRAME else IDLE_FRAME
-		body.scale.x = -1 if direction > 0 else 1
+		body.scale.x = 1 if direction > 0 else -1
 	else:
 		skin.frame = IDLE_FRAME
 		step_timer = 0.0
@@ -69,5 +69,5 @@ func change_eyes(id: int) -> void:
 	eye.texture = CharacterPresets.get_texture(CharacterPresets.EYES, id)
 
 # Shows a player's name under their character; the map passes Session.username for the local player.
-func _set_username(username: String) -> void:
-	$Skeleton/Username_label.text = username
+func set_username(username: String) -> void:
+	$LabelUsername.text = username
