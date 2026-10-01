@@ -89,6 +89,20 @@ wsServer.on("connection", (socket) => {
                     break;
                 }
 
+                // TODO: reset password (client: reset_password.tscn sends {type: "request_password_reset", email}).
+                // 1. schema.sql: add a password_resets table (id, user_id REFERENCES users ON DELETE CASCADE,
+                //    token_hashed TEXT UNIQUE, expires_at TIMESTAMPTZ, used_at TIMESTAMPTZ) - same idea as sessions.
+                // 2. auth.ts: requestPasswordReset(email) - trim + lowercase the email, look up the user; if found,
+                //    make a random token (randomBytes like createSession), store its SHA-256 hash with a ~30 min
+                //    expiry, and email a reset link/code (needs an email service, e.g. nodemailer + SMTP in .env).
+                // 3. Here: case "request_password_reset" - ALWAYS send {type: "request_password_reset_result", success: true},
+                //    even if the email doesn't exist, so nobody can use this to find out which emails have accounts.
+                //    The client then shows "Success! If the email provided is associated with an account...".
+                // 4. auth.ts: resetPassword(token, newPassword) - check the token is unexpired and unused, apply the
+                //    same 8-72 length rule, bcrypt the new password, UPDATE users, mark the token used, and
+                //    DELETE FROM sessions for that user so old logins stop working.
+                // 5. Rate-limit requests per email/socket so this can't be used to spam someone's inbox.
+
                 // Tells the client it sent a message type the server doesn't handle.
                 default:
                     send(socket, {type: "error", error: `Unknown message type: ${message.type}`});

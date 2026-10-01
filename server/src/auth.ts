@@ -85,9 +85,11 @@ export async function createAccount(
         };
     }
     
-    // NEXT CHECKPOINT IMPLEMENTATION
-    // (When you enable these, add the same parentheses as the skin/hair/eyes checks above, and declare TOP_COUNT
-    // and BOTTOM_COUNT next to the other counts.)
+    // TODO: Next checkpoint : To finish top/bottom:
+    // 1. Uncomment TOP_COUNT / BOTTOM_COUNT and top?/bottom? in CharacterSelection at the top of this file.
+    // 2. Add top and bottom to the INSERT INTO characters below ($5, $6 with characters.top ?? 0, characters.bottom ?? 0);
+    //    the characters table already has both columns.
+    // 3. SELECT c.top, c.bottom in login() and getUserProfile() (index.ts), and send them in resume_session_result.
     // if (characters.top !== undefined && !Number.isInteger(characters.top) || characters.top < 0 || characters.top >= TOP_COUNT) {
     //     return {
     //         success: false,
@@ -188,7 +190,8 @@ export async function login(
     // Look up the user and their saved character in one query.
     const result = await pool.query(
         `SELECT u.id, u.username, u.password_hashed, c.skin, c.hair, c.eyes FROM users u
-        LEFT JOIN characters c ON c.user_id = u.id WHERE u.username = $1`,
+        LEFT JOIN characters c ON c.user_id = u.id
+        WHERE u.username = $1 OR u.email = lower($1)`,
         [username.trim()]
     );
     // Both failures return the same message, so nobody can check which usernames exist.
