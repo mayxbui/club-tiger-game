@@ -30,6 +30,7 @@ func _on_message_received(data: Dictionary) -> void:
 		Session.token = str(data.get("token", ""))
 		Session.userId = int(data.get("userId", 0))
 		Session.username = str(data.get("username", ""))
+		Session.email = str(data.get("email"), "")
 		Session.character = data.get("character", {})
 
 		if $HBoxContainer/CheckboxRemember.button_pressed:
@@ -55,6 +56,7 @@ func _on_btn_create_pressed() -> void:
 # Checks the form, sends the login request to the server and waits for login_result.
 func _on_btn_login_pressed() -> void:
 	var username = $VBoxContainer/InputUsername.text.strip_edges()
+	var email = $VBoxContainer/InputUsername.text.strip_edges()
 	var password = $VBoxContainer/InputPassword.text
 	var remember = $HBoxContainer/CheckboxRemember.button_pressed
 
@@ -69,6 +71,7 @@ func _on_btn_login_pressed() -> void:
 	Network.send({
 		"type": "login",
 		"username": username,
+		"email": email,
 		"password": password,
 		"remember_me": remember
 	})

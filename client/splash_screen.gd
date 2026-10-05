@@ -3,12 +3,16 @@ extends Node2D
 const SESSION_FILE := "user://session.txt"
 const CONNECT_TIMEOUT_SECONDS := 3.0
 const CONNECT_CHECK_SECONDS := 0.1
-
 # Token read from SESSION_FILE; kept here because the server doesn't send it back in resume_session_result.
 var token := ""
+# Turn off in the Inspector to always show the splash buttons while testing.
+@export var auto_resume := true
 
 # Tries to resume session so returning players skip sign-in; otherwise shows the buttons.
 func _ready() -> void:
+	if not auto_resume:
+		_show_auth_buttons()
+		return
 	if not FileAccess.file_exists(SESSION_FILE):
 		_show_auth_buttons()
 		return
@@ -51,8 +55,6 @@ func _on_network_message_received(data: Dictionary) -> void:
 		Session.userId = int(data.get("userId", 0))
 		Session.username = str(data.get("username", ""))
 		Session.character = data.get("character", {})
-		# TODO: FIX - map.tscn was deleted, so a remembered login fails here and the player is stuck on the splash
-		# screen. Change the path to "res://client/map/world_map.tscn" (same as signin.gd and create_account.gd).
 		get_tree().change_scene_to_file("res://client/map/world_map.tscn")
 	else:
 		DirAccess.remove_absolute(SESSION_FILE)

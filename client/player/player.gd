@@ -19,6 +19,7 @@ var step_timer := 0.0
 
 
 # Moves the local player left/right with the arrow keys, switches between the walk and idle poses every STEP_SECONDS, and faces the direction of movement (placeholder until click-to-move in Week 4).
+# TODO: Movement of character
 func _physics_process(delta: float) -> void:
 	if not is_local:
 		return

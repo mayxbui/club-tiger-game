@@ -159,6 +159,16 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 horizontal_alignment = 1
 autowrap_mode = 2
 
+[node name="BtnLogin" type="Button" parent="CanvasLayer/OuterPanel" unique_id=870284456]
+layout_mode = 0
+offset_left = 707.0
+offset_top = 411.0
+offset_right = 1040.0
+offset_bottom = 451.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Have an account? Login"
+flat = true
+
 [node name="TimerDebug" type="Timer" parent="." unique_id=533603041]
 wait_time = 2.8
 one_shot = true
@@ -166,3 +176,4 @@ one_shot = true
 [connection signal="pressed" from="CanvasLayer/OuterPanel/BtnBack" to="." method="_on_btn_back_pressed"]
 [connection signal="text_changed" from="CanvasLayer/OuterPanel/CharacterPanel/InputUsername" to="." method="_on_input_username_text_changed"]
 [connection signal="pressed" from="CanvasLayer/OuterPanel/BtnCreate" to="." method="_on_btn_create_pressed"]
+[connection signal="pressed" from="CanvasLayer/OuterPanel/BtnLogin" to="." method="_on_btn_login_pressed"]

@@ -4,6 +4,7 @@ extends Node
 var token: String = ""
 var userId: int = 0
 var username: String = ""
+var email: String = ""
 var character: Dictionary = {}
 
 # Forgets the logged-in player (use on logout).
@@ -11,4 +12,5 @@ func _clear_session() -> void:
 	token = ""
 	userId = 0
 	username = ""
+	email = ""
 	character = {}

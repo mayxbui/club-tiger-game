@@ -25,6 +25,7 @@ corner_radius_bottom_left = 5
 
 [node name="SplashScreen" type="Node2D" unique_id=615202200]
 script = ExtResource("1_6c2gy")
+auto_resume = false
 
 [node name="LabelTitle" type="Label" parent="." unique_id=1234718361]
 offset_top = 168.0

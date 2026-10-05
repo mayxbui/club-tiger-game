@@ -48,9 +48,9 @@ func _on_message_received(data: Dictionary) -> void:
 # Checks the username and password against the server's rules and returns an error message, or "" if both are fine.
 func validate_creds(username: String, password: String) -> String:
 	if username_check.search(username.strip_edges()) == null:
-		return "Username must be 3-20 characters: letters, numbers, or underscores."
+		return "Username must be minimum 3 (include letters, numbers, or underscores)"
 	if password.length() < 8 or password.length() > 72:
-		return "Password must be 8-72 characters."
+		return "Password is too short (minimum is 8 characters)"
 	return ""
 
 
@@ -93,3 +93,7 @@ func _on_btn_back_pressed() -> void:
 # Updates the preview player's name tag as the player types their username (the scene connects text_changed here).
 func _on_input_username_text_changed(new_username: String) -> void:
 	$CanvasLayer/OuterPanel/CharacterPanel/Player.set_username(new_username)
+
+
+func _on_btn_login_pressed() -> void:
+	get_tree().change_scene_to_file("res://client/auth/signin.tscn")

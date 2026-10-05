@@ -1,16 +1,12 @@
 [gd_scene format=3 uid="uid://dhd56c0gjjps"]
 
 [ext_resource type="Script" uid="uid://c7rpucjuj667a" path="res://client/player/player.gd" id="1_3qdwu"]
+[ext_resource type="Texture2D" uid="uid://q86c55hgybo4" path="res://client/assets/skin/shade0.png" id="2_iwtvl"]
+[ext_resource type="Texture2D" uid="uid://2m1qgwetpmti" path="res://client/assets/hair/hair3.png" id="3_172lf"]
 [ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="5_172lf"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ee1sm"]
 size = Vector2(187, 99)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_iwtvl"]
-load_path = "res://.godot/imported/shade0.png-f03f7de37314e5858564026ac53a1b03.ctex"
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ee1sm"]
-load_path = "res://.godot/imported/hair6.png-fd4415f9c718911ce0700f2a947170c7.ctex"
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_hk56d"]
 load_path = "res://.godot/imported/eye4.png-3aad1fc74ecbba622d8a90a75131d498.ctex"
@@ -33,13 +29,13 @@ shape = SubResource("RectangleShape2D_ee1sm")
 [node name="Skeleton" type="Node2D" parent="." unique_id=525518808]
 
 [node name="Skin" type="Sprite2D" parent="Skeleton" unique_id=804251127]
-texture = SubResource("CompressedTexture2D_iwtvl")
+texture = ExtResource("2_iwtvl")
 hframes = 2
 region_rect = Rect2(145.07495, 1179.2516, 1871.925, 422.99597)
 
 [node name="Hair" type="Sprite2D" parent="Skeleton" unique_id=92792687]
 position = Vector2(9, -102)
-texture = SubResource("CompressedTexture2D_ee1sm")
+texture = ExtResource("3_172lf")
 region_rect = Rect2(1884, 71, 188, 233)
 
 [node name="Eye" type="Sprite2D" parent="Skeleton" unique_id=1261590039]
