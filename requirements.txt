@@ -1,0 +1,23 @@
+# Dependencies
+
+# ---- Tools ----
+Godot Engine 4.7.x          # client; standard build (GDScript), not the .NET build
+Node.js 22.x                # server runtime (ships with npm)
+PostgreSQL 13+              # database
+
+# ---- Server runtime packages (server/package.json "dependencies") ----
+ws ^8.18.0                  # WebSocket server
+pg ^8.13.0                  # PostgreSQL client and connection pool
+bcryptjs ^3.0.3             # password hashing
+dotenv ^16.4.5              # loads DATABASE_URL and PORT from server/.env
+
+# ---- Server dev packages (server/package.json "devDependencies") ----
+typescript ^5.6.0           # compiler (npm run build)
+tsx ^4.19.0                 # runs TypeScript directly with auto-reload (npm run dev)
+@types/node ^22.7.0
+@types/ws ^8.5.12
+@types/pg ^8.11.10
+@types/bcryptjs ^2.4.6
+
+# ---- CI ----
+barichello/godot-ci:4.7.2   # Docker image GitLab CI uses to export the Windows and web builds

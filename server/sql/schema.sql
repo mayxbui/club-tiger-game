@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Usernames are unique ignoring capitals
+CREATE UNIQUE INDEX IF NOT EXISTS users_username_lower_key ON users (lower(username));
+
 ----------------------CHARACTER: one per users-----------------------
 CREATE TABLE IF NOT EXISTS characters (
     id SERIAL PRIMARY KEY,
@@ -60,6 +63,25 @@ CREATE TABLE IF NOT EXISTS sessions (
     CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions (user_id);
     CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions (expires_at);
 
+-------------------PASSWORD_RESETS: at most one active code per user-----------------------
+CREATE TABLE IF NOT EXISTS password_resets(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    code_hashed TEXT NOT NULL,
+    attempts SMALLINT NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    expires_at TIMESTAMPTZ NOT NULL,
+    reset_token_hashed TEXT UNIQUE,
+    token_expires_at TIMESTAMPTZ
+);
+
+    CREATE INDEX IF NOT EXISTS idx_password_resets_expires_at ON password_resets(expires_at);
+
+-- For databases where password_resets was created before the token columns existed (CREATE TABLE IF NOT EXISTS
+-- doesn't add new columns to an existing table). Does nothing if the columns are already there.
+ALTER TABLE password_resets ADD COLUMN IF NOT EXISTS reset_token_hashed TEXT UNIQUE;
+ALTER TABLE password_resets ADD COLUMN IF NOT EXISTS token_expires_at TIMESTAMPTZ;
+
 -----------------------dorms: one per users-----------------------
 CREATE TABLE IF NOT EXISTS dorms (
     id SERIAL PRIMARY KEY,
@@ -67,7 +89,7 @@ CREATE TABLE IF NOT EXISTS dorms (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-        --ITEM CATALOG & DORM_ITEMS: multiple per user--
+            --ITEM CATALOG & DORM_ITEMS: multiple per user--
                     
 CREATE TABLE IF NOT EXISTS item_catalog (
     id SERIAL PRIMARY KEY,

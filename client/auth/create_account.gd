@@ -50,7 +50,7 @@ func validate_creds(username: String, password: String) -> String:
 	if username_check.search(username.strip_edges()) == null:
 		return "Username must be minimum 3 (include letters, numbers, or underscores)"
 	if password.length() < 8 or password.length() > 72:
-		return "Password is too short (minimum is 8 characters)"
+		return "Password must be 8 to 72 characters long"
 	return ""
 
 

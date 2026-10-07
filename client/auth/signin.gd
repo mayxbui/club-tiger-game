@@ -30,7 +30,7 @@ func _on_message_received(data: Dictionary) -> void:
 		Session.token = str(data.get("token", ""))
 		Session.userId = int(data.get("userId", 0))
 		Session.username = str(data.get("username", ""))
-		Session.email = str(data.get("email"), "")
+		Session.email = str(data.get("email", ""))
 		Session.character = data.get("character", {})
 
 		if $HBoxContainer/CheckboxRemember.button_pressed:

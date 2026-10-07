@@ -6,7 +6,7 @@ const SHORT_SESSION_MS = 24 * 60 * 60 * 1000; // 1 day
 const REMEMBER_ME_SESSION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 // Hash a token using SHA-256
-function hashToken(token: string): string {
+export function hashToken(token: string): string {
     return createHash("sha256").update(token).digest("hex");
 }
 
@@ -51,9 +51,16 @@ export async function deleteSession(token: string): Promise<void>{
     );
 }
 
-// Deletes expired sessions once an hour; .catch logs a failed query instead of crashing the server.
+// Deletes expired sessions and password resets once an hour
+// A reset is valid while its reset token still works, even after the 15-minute code itself has expired
 setInterval(() => {
     pool.query("DELETE FROM sessions WHERE expires_at < now()").catch((err) => {
             console.error("Session cleanup failed:", err)
+    });
+    pool.query(
+        `DELETE FROM password_resets
+        WHERE expires_at < now() AND (token_expires_at IS NULL OR token_expires_at < now())`
+    ).catch((err) => {
+            console.error("Password reset cleanup failed:", err)
     });
 }, 60 * 60 * 1000);
