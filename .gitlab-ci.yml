@@ -12,17 +12,17 @@ windows:
   stage: export
   script:
     - mkdir -v -p build/windows
-    - godot -v --export "Windows Desktop" ./build/windows/$EXPORT_NAME.exe
+    - godot --headless -v --export-release "Windows Desktop" ./build/windows/$EXPORT_NAME.exe
   artifacts:
     name: $EXPORT_NAME-$CI_JOB_NAME
     paths:
       - build/windows
 
 web:
-  stage: expor
+  stage: export
   script:
     - mkdir -v -p build/web
-    - godot -v --export "HTML5" ./build/web/index.html
+    - godot --headless -v --export-release "Web" ./build/web/index.html
   artifacts:
     name: $EXPORT_NAME-$CI_JOB_NAME
     paths:
