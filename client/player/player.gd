@@ -8,38 +8,49 @@ extends CharacterBody2D
 #@onready var top := $Skeleton/Top
 #@onready var bottom := $Skeleton/Bottom
 
-# Only the player the map spawns for this client reacts to the keyboard; the create-account preview and other
-# players leave this false.
+# True only for this client's own player (set by world_map.gd); other players' copies leave it false.
 @export var is_local := false
 
 const IDLE_FRAME := 0
 const WALK_FRAME := 1
 const STEP_SECONDS := 0.1
+const ARRIVE := 4		#close enough to target (prevent lagging)
+var click_pos := Vector2.ZERO
+var moving := false
 var step_timer := 0.0
 
+# Starts with the target on the player, so nothing moves until move_to() is called.
+func _ready():
+	click_pos = global_position
 
-# Moves the local player left/right with the arrow keys, switches between the walk and idle poses every STEP_SECONDS, and faces the direction of movement (placeholder until click-to-move in Week 4).
-# TODO: Fix character movement: 
+# Sets where this player should walk to (a point in world coordinates, e.g. a mouse click).
+func move_to(click: Vector2)->void:
+	click_pos = click
+	moving = true
+
+# Walks toward click_pos at SPEED, swapping walk/idle frames and facing left or right, then stops on arrival or at wall
 func _physics_process(delta: float) -> void:
-	if not is_local:
-		return
-	var direction := Input.get_axis("ui_left", "ui_right")
-	if direction:
-		velocity.x = direction * SPEED
+	if moving and global_position.distance_to(click_pos)>ARRIVE:
+		var direction := global_position.direction_to(click_pos)
+		velocity = direction * SPEED
 		step_timer += delta
 		if step_timer >= STEP_SECONDS:
 			step_timer = 0.0
 			skin.frame = WALK_FRAME if skin.frame == IDLE_FRAME else IDLE_FRAME
-		body.scale.x = 1 if direction > 0 else -1
+		if absf(direction.x)>0.1:
+			body.scale.x = 1 if direction.x > 0 else -1
 	else:
+		moving = false
+		velocity = Vector2.ZERO
 		skin.frame = IDLE_FRAME
 		step_timer = 0.0
-		velocity.x = move_toward(velocity.x, 0, SPEED)
 	move_and_slide()
+	# Blocked by walls before reaching the target
+	if moving and get_slide_collision_count()>0 and get_real_velocity().length() <5.0:
+		moving = false
 
 
 # Draws a saved character (e.g. Session.character); JSON numbers arrive as floats, so int() converts them, and missing keys fall back to 0.
-# Call it after add_child(), since the @onready sprite variables are only set once the player is in the tree.
 func _apply_character(character: Dictionary) -> void:
 	change_skin(int(character.get("skin", 0)))
 	change_hair(int(character.get("hair", 0)))
@@ -47,7 +58,7 @@ func _apply_character(character: Dictionary) -> void:
 	# Next checkpoint: once the Top and Bottom Sprite2D nodes exist (and their @onready lines above are uncommented),
 	# add matching handlers for them and call them here with character.get("top", 0) and character.get("bottom", 0).
 
-# Shows the chosen skin tone by swapping the skin texture (the frame stays under the walk animation's control).
+# Shows the chosen skin tone by swapping the skin texture.
 func change_skin(id: int) -> void:
 	skin.texture = CharacterPresets.get_texture(CharacterPresets.SKIN, id)
 

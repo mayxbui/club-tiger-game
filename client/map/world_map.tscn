@@ -8,23 +8,33 @@
 script = ExtResource("1_vmchv")
 
 [node name="Map" type="Sprite2D" parent="." unique_id=1215983187]
-position = Vector2(576, 366.99997)
-scale = Vector2(0.9505207, 0.95052075)
+position = Vector2(573, 328)
+scale = Vector2(0.84374994, 0.84375)
 texture = ExtResource("1_su6gu")
 metadata/_edit_group_ = true
 
 [node name="Map3" type="Sprite2D" parent="." unique_id=1581610486]
-position = Vector2(1549, 366.99994)
-scale = Vector2(0.9505209, 0.9505209)
+position = Vector2(1433.3334, 328.5)
+scale = Vector2(0.83984375, 0.83984375)
 texture = ExtResource("1_su6gu")
 metadata/_edit_group_ = true
 
 [node name="Map2" type="Sprite2D" parent="." unique_id=489857421]
-position = Vector2(-398, 365.99997)
-scale = Vector2(0.95312494, 0.95312494)
+position = Vector2(-291.00006, 329)
+scale = Vector2(0.8463541, 0.8463541)
 texture = ExtResource("1_su6gu")
 metadata/_edit_group_ = true
 
-[node name="Player" parent="." unique_id=1159748652 instance=ExtResource("2_qgng5")]
-position = Vector2(457, 285)
+[node name="Players" type="Node2D" parent="." unique_id=1332202207]
+y_sort_enabled = true
+
+[node name="Player" parent="Players" unique_id=1159748652 instance=ExtResource("2_qgng5")]
+position = Vector2(921, 428)
 scale = Vector2(0.345, 0.345)
+
+[node name="Walkable" type="Polygon2D" parent="." unique_id=1728480272]
+visible = false
+position = Vector2(36.868492, 212.16159)
+scale = Vector2(0.9342561, 0.58079267)
+polygon = PackedVector2Array(-2, -2, -1, 654, 572.10284, 652.5102, 1153, 651, 1154, -1)
+uv = PackedVector2Array(-2, -2, -1, 654, 1153, 651, 1150, 2)

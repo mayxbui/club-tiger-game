@@ -3,6 +3,7 @@ import{WebSocket, WebSocketServer} from "ws";
 import { createAccount, login, requestPasswordReset, verifyResetCode, resetPassword } from "./auth.js";
 import { validateSession, deleteSession } from "./sessions.js";
 import { pool } from "./db.js";
+import { joinWorld, movePlayer, leaveWorld } from "./world.js";
 
 // Initialize the WebSocket server
 const PORT = Number(process.env.PORT ?? 3103);
@@ -59,7 +60,9 @@ const getUserProfile = async (userId: number) => {
 // Handles each new client connection
 wsServer.on("connection", (socket) => {
     send(socket, { type: "connected", message: `You are now connected to the server` });
+    // When the socket closes, take its player off the map and forget everything about it.
     socket.on("close", () => {
+        leaveWorld(socket);
         socketUsers.delete(socket);
         loginFailures.delete(socket);
         resetRequests.delete(socket);
@@ -121,11 +124,11 @@ wsServer.on("connection", (socket) => {
                 // Logs the socket out: deletes its session from the database and forgets user 
                 case "logout":{
                     await deleteSession(message.token);
+                    leaveWorld(socket);
                     socketUsers.delete(socket);
                     send(socket, {type: "logout_result", success: true});
                     break;
                 }
-
                 // Emails a reset code
                 case "request_password_reset": {
                     const now = Date.now();
@@ -150,8 +153,19 @@ wsServer.on("connection", (socket) => {
                     send(socket, {type: "reset_password_result", ...result});
                     break;
                 }
-
-                // Tells the client it sent a message type the server doesn't handle
+                // Puts a logged-in player on the map; the userId always comes from socketUsers, never from the message.
+                case "join_world": {
+                    const userId = socketUsers.get(socket);
+                    if (!userId) { send(socket, {type: "error", error: "Please sign in first."}); break; }
+                    joinWorld(socket, userId, await getUserProfile(userId), message.x, message.y);
+                    break;
+                }
+                // Walks the player toward the point they clicked; ignored if this socket isn't logged in.
+                case "move": {
+                    const userId = socketUsers.get(socket);
+                    if (userId) movePlayer(socket, userId, message.x, message.y);
+                    break;
+                }
                 default:
                     send(socket, {type: "error", error: `Unknown message type: ${message.type}`});
             }

@@ -20,6 +20,7 @@ font_size = 30
 shadow_color = Color(0, 0, 0, 0.8235294)
 
 [node name="Player" type="CharacterBody2D" unique_id=1159748652]
+collision_layer = 2
 script = ExtResource("1_3qdwu")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=519127577]
