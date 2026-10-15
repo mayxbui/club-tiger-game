@@ -18,20 +18,30 @@ function send(socket: WebSocket, message: unknown) {
     socket.send(JSON.stringify(message));
 }
 
-// Remembers which logged-in user each socket belongs to. Messages (update_character, move, chat, friends) will use this userId and never trust a userId sent by the client
+// Remembers which logged-in user each socket belongs to.
 const socketUsers = new Map<WebSocket, number>();
+// The session token each socket logged in with.
+const socketTokens = new Map<WebSocket, string>();
 
-// Remembers this socket as the user. 
-// If the same account is already logged in on another socket, that older socket is told it was closed, so one account never shows up twice in the world.
-function setSocketUser(socket: WebSocket, userId: number) {
+// Remembers this socket as the user (and the token it logged in with).
+// One account never shows up twice in the world.
+function setSocketUser(socket: WebSocket, userId: number, token: string) {
     for (const [otherSocket, otherUserId] of socketUsers) {
         if (otherUserId === userId && otherSocket !== socket) {
+            const oldToken = socketTokens.get(otherSocket);
+            // Only if it's a DIFFERENT token: two game windows sharing one session.txt use the same token,
+            // and deleting it would also log out the socket that is logging in right now.
+            if (oldToken && oldToken !== token){
+                deleteSession(oldToken).catch((e) => console.error("Kick: failed to delete old session", e));
+            }
+            socketTokens.delete(otherSocket);
             socketUsers.delete(otherSocket);
             send(otherSocket, {type: "kicked", reason: "This account logged in somewhere else."});
             otherSocket.close(4000, "Logged in elsewhere");
         }
     }
     socketUsers.set(socket, userId);
+    socketTokens.set(socket,token);
 }
 
 // Failed logins per socket
@@ -64,6 +74,7 @@ wsServer.on("connection", (socket) => {
     socket.on("close", () => {
         leaveWorld(socket);
         socketUsers.delete(socket);
+        socketTokens.delete(socket);
         loginFailures.delete(socket);
         resetRequests.delete(socket);
     });
@@ -78,7 +89,7 @@ wsServer.on("connection", (socket) => {
                     const character = message.character ? message.character : {};
                     const result = await createAccount(message.username, message.email, message.password, character);
                     if(result.success) {
-                        setSocketUser(socket, result.userId);
+                        setSocketUser(socket, result.userId, result.token);
                     }
                     send(socket, {type: "create_account_result", ...result});
                     break;
@@ -93,7 +104,7 @@ wsServer.on("connection", (socket) => {
                     const result = await login(message.username, message.password, Boolean(message.remember_me));
                     if(result.success) {
                         loginFailures.delete(socket);
-                        setSocketUser(socket, result.userId);
+                        setSocketUser(socket, result.userId, result.token);
                     } else {
                         // The count resets to 0 when a lockout begins, so after it passes the player gets MAX_LOGIN_FAILURES more tries
                         const count = (failures?.count ?? 0) + 1;
@@ -108,12 +119,12 @@ wsServer.on("connection", (socket) => {
                     const userId = await validateSession(message.token);
                     if(userId){
                         const profile = await getUserProfile(userId);
-                        setSocketUser(socket, userId);
+                        setSocketUser(socket, userId, message.token);
                         send(socket, {
                             type: "resume_session_result", 
                                 success: true, userId: userId, 
                                 username: profile.username, 
-                                character:{skin: profile.skin, hair: profile.hair, eyes: profile.eyes} // next checkpoint: top: profile.top, bottom: profile.bottom
+                                character:{skin: profile.skin, hair: profile.hair, eyes: profile.eyes} // TODO: next checkpoint: top: profile.top, bottom: profile.bottom
                             });                        
                         }else{
                             send(socket, {
@@ -126,9 +137,11 @@ wsServer.on("connection", (socket) => {
                     await deleteSession(message.token);
                     leaveWorld(socket);
                     socketUsers.delete(socket);
+                    socketTokens.delete(socket);
                     send(socket, {type: "logout_result", success: true});
                     break;
                 }
+
                 // Emails a reset code
                 case "request_password_reset": {
                     const now = Date.now();
@@ -153,6 +166,7 @@ wsServer.on("connection", (socket) => {
                     send(socket, {type: "reset_password_result", ...result});
                     break;
                 }
+
                 // Puts a logged-in player on the map; the userId always comes from socketUsers, never from the message.
                 case "join_world": {
                     const userId = socketUsers.get(socket);
