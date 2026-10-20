@@ -1,78 +1,50 @@
 # Club Tiger
 
-A multiplayer 2D social world built with **Godot 4** and a **TypeScript WebSocket server** backed by **PostgreSQL**.
+## About
+
+**Club Tiger is a cozy online hangout set on a college campus.** Make your own character, step onto the campus map,
+and explore it together with everyone else who's online, in real time.
+
+It's a place to unwind between classes, meet new people, and make the campus your own. Soon you'll be able to chat
+with other players, add friends, and decorate a dorm room that's all yours.
+
+<!-- A multiplayer 2D social world built with **Godot 4** and a **TypeScript WebSocket server** backed by **PostgreSQL**.
 Players create an account, design their character, and step into a shared campus map where they can walk around,
-chat, and decorate their own dorm room and make friends.
+chat, and decorate their own dorm room and make friends. -->
 
-The client exports to **Windows, macOS, Linux and the web (HTML5)**, and a GitLab CI pipeline builds and deploys
-the web version automatically.
+<!-- The client exports to **Windows, macOS, Linux and the web (HTML5)**, and a GitLab CI pipeline builds and deploys the web version automatically. -->
 
+### Features
 
-<!-- ## Overview
+**Available now**
+- **Make it yours:** choose your character's skin tone, hairstyle, and eyes, and see the preview change as you pick.
+  Your look is saved and waiting every time you come back.
+- **Explore together:** walk around the shared campus map and see other players moving around you.
+- **Jump right back in:** sign in with your username or email, and check "Remember me" to skip signing in next time.
+- **Never get locked out:** forgot your password? Get a one-time code by email and set a new one.
 
-- **Create account system over WebSockets:** sign-up, sign-in with username *or* email, "remember me" sessions,
-  automatic session resume on launch, and logout.
-- **Character customization:** skin tone, hairstyle, and eyes chosen at sign-up with a live preview, saved to the
-  database and redrawn on every login.
-  client never gets to say who it is.
-- **Security:**
-  - Passwords hashed with **bcrypt**. Session tokens are 256-bit random values, and only their **SHA-256 hashes**
-    are stored, so a database leak doesn't hand out live sessions.
-  - **Sliding session expiry:** 1 day of inactivity, capped at 30 days for "remember me".
-  - Parameterized SQL everywhere. Multi-table writes run in **transactions**.
-  - **Generic auth errors** so the server never reveals which usernames or emails exist.
-  - **Login rate limiting**, a 16 KB message size cap, and **one active login per account**: signing in elsewhere
-    disconnects the older client.
-  - Case-insensitive unique usernames, so `May` and `may` can't both exist.
-- **Resilient networking:** the client reconnects automatically and resumes the player's session.
-- **CI/CD:** GitLab CI exports Windows and web builds with a Godot Docker image and publishes the web build to
-  GitLab Pages. -->
+**Coming soon**
+- **Chat** with other players, with a filter to keep conversations friendly
+- **Friends**, so you can find the people you meet again
+- **Your own dorm room** to decorate with furniture
 
-# Tech stack
+### Tech stack
 
-| Layer    | Technology                                                                   |
-|----------|------------------------------------------------------------------------------|
-| Client   | Godot 4.7 (GDScript), GL Compatibility renderer, `WebSocketPeer`             |
-| Server   | Node.js 22, TypeScript, [`ws`](https://github.com/websockets/ws)             |
-| Database | PostgreSQL with [`pg`](https://node-postgres.com/) connection pooling        |
-| Auth     | `bcryptjs`, Node `crypto` (random tokens + SHA-256)                          |
-| CI/CD    | GitLab CI, `barichello/godot-ci` Docker image, GitLab Pages                  |
+| Layer    | Technology                                                          |
+|----------|---------------------------------------------------------------------|
+| Client   | [Godot 4.7](https://godotengine.org/) (GDScript)                    |
+| Server   | Node.js 22, TypeScript                                              |
+| Database | PostgreSQL                                                          |
+| Auth     | `bcryptjs`, Node `crypto`, `nodemailer`                             |
+| CI/CD    | GitLab CI, `barichello/godot-ci` Docker image, GitLab Pages         |
 
-## Architecture
+### Project architecture
 
 ```
-┌──────────────────────┐      JSON over WebSocket       ┌──────────────────────┐      SQL      ┌────────────┐
-│  Godot client        │  ───────────────────────────▶  │  Node/TS server      │  ──────────▶  │ PostgreSQL │
-│  Network (autoload)  │  ◀───────────────────────────  │  ws + message router │  ◀──────────  │            │
-│  Session (autoload)  │                                │  auth / sessions     │               │            │
-└──────────────────────┘                                └──────────────────────┘               └────────────┘
+Godot client  <── WebSocket ──>  Node.js server  <──>  PostgreSQL
 ```
 
-- **`Network`** (autoload) owns the WebSocket: it polls it, parses JSON, emits `message_received`, and handles
-  reconnects plus account-wide events such as being signed out from another device.
-- **`Session`** (autoload) holds the signed-in player's data across scene changes.
-- The **server** routes each message by `type`, keeps a map from each socket to its user, and answers with
-  `<type>_result` messages. Unexpected errors are logged on the server, and the client only gets a generic message.
-
-### Message protocol (current)
-
-| Client → Server   | Server → Client          | Purpose                                                   |
-|-------------------|--------------------------|-----------------------------------------------------------|
-| `create_account`  | `create_account_result`  | Validate, hash the password, create user + character + dorm |
-| `login`           | `login_result`           | Check credentials and issue a session token               |
-| `resume_session`  | `resume_session_result`  | Exchange a saved token for the player's profile           |
-| `logout`          | `logout_result`          | Revoke the session token                                  |
-| —                 | `kicked`                 | The same account signed in on another client              |
-| —                 | `error`                  | Malformed message or server error                         |
-
-### Database schema
-
-`users` · `characters` (1:1) · `sessions` (1:many) · `password_resets` · `friendships` and `blocks` (self-joins on
-`users`) · `dorms` (1:1) · `item_catalog` and `dorm_items` (furniture placement with position, layer, and scale).
-See [`server/sql/schema.sql`](server/sql/schema.sql).
-
-
-## Project structure
+<!-- ### Project structure
 
 ```
 club-tiger/
@@ -86,34 +58,53 @@ club-tiger/
 │   └── assets/                Sprites, fonts, map art
 ├── server/
 │   ├── src/index.ts           WebSocket server and message router
-│   ├── src/auth.ts            Account creation and login
+│   ├── src/auth.ts            Account creation, login, and password reset
 │   ├── src/sessions.ts        Session tokens: create, validate, revoke, cleanup
-│   ├── src/db.ts              PostgreSQL pool
-│   └── sql/schema.sql         Database schema (safe to re-run)
+│   ├── src/world.ts           Players on the map and movement sync
+│   ├── src/chat.ts            Chat (in progress)
+│   ├── src/chatFilter.ts      Chat word filter (in progress)
+│   ├── src/data/              Password reset email template
+│   ├── src/db.ts              Database connection
+│   └── sql/                   Database setup
+├── requirements.txt           Tool and package versions
 └── .gitlab-ci.yml             Export and deploy pipeline
 ```
+-->
 
-## Running locally
 
-See [`requirements.txt`](requirements.txt) for versions.
+<!-- ## Visuals -->
 
-### 1. Database
-```bash
-createuser -P club_tiger
-createdb -O club_tiger club_tiger
-psql -h localhost -U club_tiger -d club_tiger -f server/sql/schema.sql
-```
+<!-- Replace with a screenshot or GIF of the game: ![Club Tiger gameplay](docs/screenshot.png) -->
+<!-- *Screenshots coming soon.* -->
 
-### 2. Server
-```bash
-cd server
-npm install
-cp .env.example .env      # then set DATABASE_URL (and PORT if 3103 is taken)
-npm run dev               # auto-reloads on changesn - use `npm run build && npm start` for production
-```
 
-### 3. Client
-1. Open `project.godot` in **Godot 4.7**.
-2. In `client/network/network.gd`, point `url` at your server, e.g. `ws://localhost:3103`.
-3. Press **F5**. To test multiplayer on one machine, use *Debug → Customize Run Instances* to launch several
-   clients at once.
+## Installation
+
+### Requirements
+- **Windows 10 or later**, or a modern web browser (Chrome, Firefox, Edge, or Safari)
+- An internet connection, since the game connects to the Club Tiger server
+
+<!-- ### Play in the browser
+1. Open the Club Tiger web build. Add the GitLab Pages link here -->
+<!-- 2. Wait for the game to load. No download is needed. -->
+
+<!-- ### Play on Windows
+1. Download the latest Windows build. (Add the download link here)
+2. Unzip the folder and run `club-tiger.exe`.
+3. If Windows SmartScreen shows a warning, click **More info → Run anyway**. The game isn't code-signed yet. -->
+
+
+## Usage
+
+1. **Create an account.** Choose a username, enter your email, and pick a password of at least 8 characters.
+2. **Design your character.** Pick a skin tone, hairstyle, and eyes. The preview updates as you choose.
+3. **Enter the campus.** You'll appear on the shared map with everyone else who's online.
+4. **Walk around.** Click anywhere on the map and your character walks there.
+5. **Stay signed in.** Check **Remember me** at sign-in and the game logs you back in automatically next time.
+
+Forgot your password? Click **Forgot password?** on the sign-in screen and a one-time code will be emailed to you.
+
+
+## Project status
+
+Club Tiger is a work in progress.
