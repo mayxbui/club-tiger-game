@@ -2,11 +2,7 @@
 
 ## About
 
-**Club Tiger is a cozy online hangout set on a college campus.** Make your own character, step onto the campus map,
-and explore it together with everyone else who's online, in real time.
-
-It's a place to unwind between classes, meet new people, and make the campus your own. Soon you'll be able to chat
-with other players, add friends, and decorate a dorm room that's all yours.
+Club Tiger is a multiplayer world for DePauw University students, where players explore iconic campus locations, chat and interact with others, visit friends' dorm rooms, and personalize their own spaces. Club Tiger aims to create a more playful way for students to find their community on campus.
 
 <!-- A multiplayer 2D social world built with **Godot 4** and a **TypeScript WebSocket server** backed by **PostgreSQL**.
 Players create an account, design their character, and step into a shared campus map where they can walk around,
@@ -18,7 +14,6 @@ chat, and decorate their own dorm room and make friends. -->
 
 **Available now**
 - **Make it yours:** choose your character's skin tone, hairstyle, and eyes, and see the preview change as you pick.
-  Your look is saved and waiting every time you come back.
 - **Explore together:** walk around the shared campus map and see other players moving around you.
 - **Jump right back in:** sign in with your username or email, and check "Remember me" to skip signing in next time.
 - **Never get locked out:** forgot your password? Get a one-time code by email and set a new one.
@@ -81,8 +76,7 @@ club-tiger/
 ## Installation
 
 ### Requirements
-- **Windows 10 or later**, or a modern web browser (Chrome, Firefox, Edge, or Safari)
-- An internet connection, since the game connects to the Club Tiger server
+- **Windows 10 or later** & modern web browser (Chrome, Firefox, Edge, or Safari)
 
 <!-- ### Play in the browser
 1. Open the Club Tiger web build. Add the GitLab Pages link here -->
