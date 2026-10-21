@@ -11,9 +11,9 @@ import { WebSocket } from "ws";
 import { findBlockedPhrase } from "./chatFilter.js";
 import { getWorldUsername, broadcastToWorld } from "./world.js";
 
-const MAX_CHAT_LENGTH = 48;    // same as the client LineEdit max_length and counter (#7)
-const MAX_MESSAGES = 3;        // at most 3 messages...
-const RATE_CHAT = 3000;        // ...in any 3 seconds
+const MAX_CHAT_LENGTH = 48;   
+const MAX_MESSAGES = 3;        
+const RATE_CHAT = 3000;        
 const recentMessages = new Map<number, number[]>();   // userId -> times of their recent messages
 
 // Sends one JSON message to one socket (its own copy, because this file must not import from index.ts).
@@ -29,13 +29,12 @@ function reject(socket: WebSocket, reason: string){
     });
 }
 
-// Cleans the message (never trust the client), checks length, rate limit and blocked words, then broadcasts it.
-// Only players on the map can chat, and only from their current socket.
+// Cleans the message (never trust the client), checks length, rate limit and blocked words, then broadcasts it
 export function handleChat(socket: WebSocket, userId: number, chatMsg: unknown): void{
     const username = getWorldUsername(socket,userId);
     if(!username) return;
     if(typeof chatMsg!== "string") return;
-    
+
     let text = chatMsg.normalize("NFC");
     text = text.replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g, "")    // remove invisible and direction characters
     text = text.replace(/[\u0000-\u001F\u007F]/g, " ")    // newlines, tabs and other control characters

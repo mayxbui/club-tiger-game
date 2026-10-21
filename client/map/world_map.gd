@@ -16,12 +16,9 @@ var notice_tween: Tween
 @onready var chat_input := $ChatUI/ChatPanel/VBoxContainer/HBoxContainer/ChatInput
 @onready var chat_notice := $ChatUI/ChatPanel/VBoxContainer/ChatNotice
 # Test chat on client. Set to false to test on server. 
-const OFFLINE_CHAT_TEST := true
+const OFFLINE_CHAT_TEST := false
 
-
-# CHAT (GitHub #18, part of #7): no chat log - every message shows as a bubble above the speaker's head
-# (player.gd show_chat_bubble), for everyone including the sender. The only text by the chat box is a short red
-# notice when your own message wasn't sent. Server side is #19 (chat.ts, chatFilter.ts).
+# Server side (chat.ts, chatFilter.ts).
 #   send     {"type": "chat", "text": ...}
 #   receive  {"type": "chat_message", "userId", "username", "text"}   -> bubble above that player (including you)
 #            {"type": "chat_rejected", "reason"}                      -> red notice, only you see it
@@ -55,23 +52,21 @@ func _send_chat(text: String) -> void:
 	if text.is_empty():
 		chat_input.release_focus()
 		return
+	# Offline test: skip the server , so it works without signing in or a connection.
+	if OFFLINE_CHAT_TEST:
+		_test_server_chat(text)
+		chat_input.clear()
+		_update_chat_counter(0)
+		return
 	if Network.send({
 		"type": "chat",
 		"text": text
 	}):
 		chat_input.clear()
 		_update_chat_counter(0)
-	#else:
-		#_show_chat_notice("Message not sent.")
-	# Use this block when test chat on client-side
 	else:
-		if OFFLINE_CHAT_TEST:
-			_test_server_chat(text)
-			chat_input.clear()
-			_update_chat_counter(0)
-		else:
-			_show_chat_notice("Message not sent.")
-		
+		_show_chat_notice("Message not sent.")
+
 # Pretends to be the server: rejects a test word, otherwise sends the message back like chat_message would.
 func _test_server_chat(text: String) -> void:
 	if "bad" in text.to_lower():
