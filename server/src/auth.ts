@@ -37,7 +37,7 @@ export type AuthResult =
     | {success:true; userId:number; username:string; token:string, character?: CharacterSelection}
     | {success:false; error:string};
 
-// Create a new user account function
+// ============================== CREATE ACCOUNT ==============================
 // Validates the username, email, and password, hashes the password, and inserts the new user into the database along with their characters selection
 // If successful: creates a session for the user and returns success
 // If errors or if the username/email already exists: returns failure with error message
@@ -135,11 +135,9 @@ export async function createAccount(
             [row.id]
         );
 
-        // Commit first, so the users row exists before createSession (which uses a different connection) points to it.
         await client.query("COMMIT");
 
-        // The account is saved at this point. If the session can't be created, don't report a failed signup
-        // (retrying would say the username already exists); ask the player to sign in instead.
+        // The account is saved. If the session can't be created, don't report a failed signup
         try{
             const token = await createSession(row.id, false);
             return{
@@ -159,7 +157,6 @@ export async function createAccount(
         await client.query("ROLLBACK");
         // A duplicate username or email tells the player which one is taken; any other error goes to index.ts.
         if(err.code === "23505" && err.constraint){
-            // users_username_lower_key (schema.sql) also blocks names that differ only in capitals, e.g. "May" vs "may".
             if(err.constraint === "users_username_key" || err.constraint === "users_username_lower_key"){
                 return{
                     success: false,
@@ -179,7 +176,7 @@ export async function createAccount(
     }
 }
 
-// Login function
+// ============================== LOGIN ==============================
 // Checks if the username exists and if the password matches the hashed password in the database
 // If successful: creates a session for the user and returns success
 // If errors or if the username/password is incorrect: returns failure with error message

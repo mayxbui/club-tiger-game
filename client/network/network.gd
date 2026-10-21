@@ -25,6 +25,13 @@ func _ready() -> void:
 # Polls the socket every frame, emits connected/disconnected when the state changes, and forwards each JSON message.
 func _process(_delta: float) -> void:
 	socket.poll()
+	while socket.get_available_packet_count() > 0:
+		var payload := socket.get_packet().get_string_from_utf8()
+		var parsed = JSON.parse_string(payload)
+		if parsed is Dictionary:
+			_handle_session_message(parsed)
+			message_received.emit(parsed)
+
 	var state := socket.get_ready_state()
 
 	if state != last_state:
@@ -34,18 +41,17 @@ func _process(_delta: float) -> void:
 			# The server forgets who a socket is when it closes, so a logged-in player resumes their session.
 			if not Session.token.is_empty():
 				resuming = true
-				send({"type": "resume_session", "token": Session.token})
+				send({
+					"type": "resume_session", 
+					"token": Session.token
+				})
 		elif state == WebSocketPeer.STATE_CLOSED:
 			print("Disconnected from server (code %d: %s)" % [socket.get_close_code(), socket.get_close_reason()])
+			if socket.get_close_code() == 4000:     # 4000 = "Logged in elsewhere" (setSocketUser in server/src/index.ts)
+				_return_to_splash()
 			disconnected.emit()
 			_reconnect()
 
-	while socket.get_available_packet_count() > 0:
-		var payload := socket.get_packet().get_string_from_utf8()
-		var parsed = JSON.parse_string(payload)
-		if parsed is Dictionary:
-			_handle_session_message(parsed)
-			message_received.emit(parsed)
 
 # Waits RECONNECT_DELAY_SECONDS (so a down server isn't retried every frame), then connects again.
 # If that attempt fails, the socket goes back to STATE_CLOSED and _process calls this again.
@@ -89,10 +95,15 @@ func send(message: Dictionary) -> bool:
 		return false
 	return true
 
-# TODO: logout helper for later (e.g. a Logout button in the map UI):
-#   send {"type": "logout", "token": Session.token}, delete "user://session.txt" with
-#   DirAccess.remove_absolute, call Session._clear_session(), then change_scene_to_file to the splash screen.
-
+# Tells the server to end this session (it deletes the token and takes the player off the map), then clears the
+# local login and shows the splash screen. If the socket is already closed, the server has already removed the player.
+func logout() -> void:
+	send({
+		"type": "logout",
+		"token": Session.token
+	})
+	_return_to_splash();
+	
 # Returns true when the socket is open and messages can be sent.
 func is_connected_to_server() -> bool:
 	return socket.get_ready_state() == WebSocketPeer.STATE_OPEN

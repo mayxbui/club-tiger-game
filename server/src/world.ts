@@ -1,7 +1,7 @@
 import { WebSocket } from "ws";
+import { forgetChatUser } from "./chat.js";
 
 // Multiplayer map (logic in world.ts)
-// Who is on it, where they are, and telling everyone else when someone joins, moves or leaves.
 // index.ts checks who the socket belongs to and calls joinWorld / movePlayer / leaveWorld and
 // everything else here is PRIVATE: This file must never import from index.ts
 
@@ -12,6 +12,7 @@ import { WebSocket } from "ws";
     //   server -> others  player_moved   {userId, fromX, fromY, toX, toY}
     //   server -> others  player_left    {userId}
     //   PlayerInfo = {userId, username, character: {skin, hair, eyes}, x, y, toX, toY}
+
 
 // Must match SPEED in client/player/player.gd (pixels per second).
 const PLAYER_SPEED = 300;
@@ -35,7 +36,7 @@ type PlayerInfo = {
 const worldPlayers = new Map<number, WorldPlayer>();
 
 // Sends one message to one socket as JSON.
-function sendTo(socket: WebSocket, message: unknown) {
+function send(socket: WebSocket, message: unknown) {
     socket.send(JSON.stringify(message));
 }
 
@@ -67,7 +68,7 @@ function playerInfo(userId: number, p: WorldPlayer): PlayerInfo {
 function broadcast(message: unknown, exceptUserId: number) {
     for (const [id, p] of worldPlayers) {
         if (id !== exceptUserId && p.socket.readyState === WebSocket.OPEN) {
-            sendTo(p.socket, message);
+            send(p.socket, message);
         }
     }
 }
@@ -106,7 +107,7 @@ export function joinWorld(
     for (const [id, p] of worldPlayers) {
         if (id !== userId) others.push(playerInfo(id, p));
     }
-    sendTo(socket, { type: "world_state", players: others });
+    send(socket, { type: "world_state", players: others });
     broadcast({ type: "player_joined", ...playerInfo(userId, player) }, userId);
 }
 
@@ -134,8 +135,19 @@ export function leaveWorld(socket: WebSocket): void {
     for (const [userId, p] of worldPlayers) {
         if (p.socket === socket) {
             worldPlayers.delete(userId);
+            forgetChatUser(userId);
             broadcast({ type: "player_left", userId }, userId);
             return;
         }
     }
+}
+
+// Returns the player's username if they're on the map from this socket, otherwise null (so only they can chat)
+export function getWorldUsername(socket: WebSocket, userId: number): string | null{
+    const player = worldPlayers.get(userId);
+    return player && player.socket === socket?player.username:null
+}
+
+export function broadcastToWorld(message: unknown): void{
+    broadcast(message, -1);
 }

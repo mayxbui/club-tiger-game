@@ -1,32 +1,30 @@
 extends Node2D
 
 const PLAYER_SCENE := preload("res://client/player/player.tscn")
-# If another player's copy here is further than this from where the server says they started walking
-# (e.g. after lag or a missed message), jump it there first instead of letting it walk from the wrong place.
 const SNAP_DISTANCE := 60.0
-
-# Random spawn point along the bottom path, so players who join at the same time don't stand on top of each other.
+const NOTICE_WAIT := 2.0
+# Longest chat message; must match MAX_CHAT_LENGTH in server/src/chat.ts.
+const MAX_CHAT_LENGTH := 48
+# The countdown turns red when this many characters (or fewer) are left.
+const CHAT_WARN_LEFT := 10
+# Random spawn point along the bottom path
 var spawnX = randf_range(200,930)
 var spawnY = 430
 # Every other player on the map: userId (int) -> their Player node under $Players.
 var remote_players := {}
+var notice_tween: Tween
+@onready var chat_input := $ChatUI/ChatPanel/VBoxContainer/HBoxContainer/ChatInput
+@onready var chat_notice := $ChatUI/ChatPanel/VBoxContainer/ChatNotice
+# Test chat on client. Set to false to test on server. 
+const OFFLINE_CHAT_TEST := true
 
-# TODO (chat 1) - SCENE: in world_map.tscn add a CanvasLayer "ChatUI" (a CanvasLayer stays fixed on screen and is
-#   drawn above the map and players), containing:
-#     PanelContainer "ChatPanel"   bottom-left corner, e.g. position (16, 440), size (380, 190); mouse_filter = Stop
-#       VBoxContainer
-#         RichTextLabel "ChatLog"   custom_minimum_size (360, 140), scroll_following = true,
-#                                   bbcode_enabled = FALSE (otherwise a player could type [img] or [url] tags)
-#         HBoxContainer
-#           LineEdit "ChatInput"   size_flags_horizontal = Expand Fill, max_length = 120,
-#                                  placeholder_text = "Press Enter to chat"
-#           Button "BtnSend"       text = "Send"
-#   mouse_filter = Stop on the panel is what makes clicks on the chat box NOT reach _unhandled_input below,
-#   so clicking the chat box doesn't also walk the player there.
-#   Style it like the auth screens (the black StyleBoxFlat for the input, Ribeye font for the log).
-#   Shorter paths for the code below:  @onready var chat_log := $ChatUI/ChatPanel/VBoxContainer/ChatLog
-#                                      @onready var chat_input := $ChatUI/ChatPanel/VBoxContainer/HBoxContainer/ChatInput
-#   const MAX_CHAT_LINES := 50   # older lines are removed so the log doesn't grow forever
+
+# CHAT (GitHub #18, part of #7): no chat log - every message shows as a bubble above the speaker's head
+# (player.gd show_chat_bubble), for everyone including the sender. The only text by the chat box is a short red
+# notice when your own message wasn't sent. Server side is #19 (chat.ts, chatFilter.ts).
+#   send     {"type": "chat", "text": ...}
+#   receive  {"type": "chat_message", "userId", "username", "text"}   -> bubble above that player (including you)
+#            {"type": "chat_rejected", "reason"}                      -> red notice, only you see it
 
 # Spawns the local player at a random point, draws their saved character and username, and joins the shared world.
 func _ready() -> void:
@@ -36,38 +34,67 @@ func _ready() -> void:
 	$Players/Player.set_username(Session.username)
 	Network.message_received.connect(_on_message_received)
 	_join_world()
-	# TODO (chat 2): hook up the chat box:
-	#   chat_input.text_submitted.connect(func(text): _send_chat(text))     # Enter sends
-	#   $ChatUI/ChatPanel/VBoxContainer/HBoxContainer/BtnSend.pressed.connect(func(): _send_chat(chat_input.text))
+	chat_input.text_submitted.connect(func (text):
+		_send_chat(text))
+	$ChatUI/ChatPanel/VBoxContainer/HBoxContainer/BtnSend.pressed.connect(func():
+		_send_chat(chat_input.text))
+	chat_input.max_length = MAX_CHAT_LENGTH
+	chat_input.text_changed.connect(func(text):
+		_update_chat_counter(text.length()))
+	_update_chat_counter(0)
 
-# TODO (chat 3): add _send_chat - sends what the player typed; the server checks and filters it, then sends it
-#   back to everyone (including this player) as chat_message, so don't add it to the log here.
-#   func _send_chat(text: String) -> void:
-#       text = text.strip_edges()
-#       if text.is_empty():
-#           chat_input.release_focus()     # Enter on an empty box closes the chat, so the player can go back to clicking
-#           return
-#       if Network.send({"type": "chat", "text": text}):
-#           chat_input.clear()             # keep focus so they can type the next message straight away
-#       else:
-#           _add_system_line("Not connected - message not sent.")
-
+# Shows how many characters are LEFT (counts down from MAX_CHAT_LENGTH), red when only CHAT_WARN_LEFT or fewer remain.
+func _update_chat_counter(length: int) -> void:
+	var left := MAX_CHAT_LENGTH - length
+	var counter := $ChatUI/ChatPanel/VBoxContainer/HBoxContainer/ChatLimit
+	counter.text = str(left)
+	
+# Sends what the player typed and server filters it.
+func _send_chat(text: String) -> void:
+	text = text.strip_edges()
+	if text.is_empty():
+		chat_input.release_focus()
+		return
+	if Network.send({
+		"type": "chat",
+		"text": text
+	}):
+		chat_input.clear()
+		_update_chat_counter(0)
+	#else:
+		#_show_chat_notice("Message not sent.")
+	# Use this block when test chat on client-side
+	else:
+		if OFFLINE_CHAT_TEST:
+			_test_server_chat(text)
+			chat_input.clear()
+			_update_chat_counter(0)
+		else:
+			_show_chat_notice("Message not sent.")
+		
+# Pretends to be the server: rejects a test word, otherwise sends the message back like chat_message would.
+func _test_server_chat(text: String) -> void:
+	if "bad" in text.to_lower():
+		_on_message_received({"type": "chat_rejected", "reason": "Your message wasn't sent because it contains blocked language."})
+	else:
+		_on_message_received({"type": "chat_message", "userId": Session.userId, "username": Session.username, "text": text})
+	
 # Tells the server this player is on the map and where they're standing; it answers with world_state.
 func _join_world() -> void:
 	var pos: Vector2 = $Players/Player.global_position
 	Network.send({"type": "join_world", "x": pos.x, "y": pos.y})
 
-# Walks the local player to a left click inside the walkable area and tells the server about the move.
+# Walks the local player to a left click inside the walkable area.
 # _unhandled_input (not _input) means clicks on UI like the chat box are used by the UI and don't move the player.
+# Press Enter to open the chat box; clicking the map closes it.
 func _unhandled_input(event: InputEvent) -> void:
-	# TODO (chat 4): pressing Enter anywhere on the map opens the chat box:
-	#   if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER and not chat_input.has_focus():
-	#       chat_input.grab_focus()
-	#       get_viewport().set_input_as_handled()
-	#       return
-	#   And when the player clicks the map (inside the if below), call chat_input.release_focus() so the
-	#   box stops taking keys once they're walking around again.
+	if(event is InputEventKey and event.pressed and event.keycode == KEY_ENTER and not chat_input.has_focus()):
+		chat_input.grab_focus()
+		get_viewport().set_input_as_handled()
+		return
+		
 	if(event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed):
+		chat_input.release_focus()
 		var click := get_global_mouse_position()
 		if not Geometry2D.is_point_in_polygon($Walkable.to_local(click), $Walkable.polygon):
 			return
@@ -104,14 +131,23 @@ func _on_message_received(data: Dictionary) -> void:
 		"resume_session_result":
 			if data.get("success", false):
 				_join_world()
-
+		# Show chat as a bubble above that player.
+		"chat_message":
+			var id := int(data.get("userId",0))
+			var speaker = $Players/Player if id == Session.userId else remote_players.get(id)
+			if speaker != null:           # null if they left a moment ago
+				speaker.show_chat_bubble(str(data.get("text", "")))
+		# Only this player gets this (blocked word, too long, too fast): show the reason as a red notice.
+		"chat_rejected":
+			_show_chat_notice(str(data.get("reason", "Message not sent.")))
+			
 # Creates another player's character from the server's PlayerInfo ({userId, username, character, x, y, toX, toY}).
 func _add_remote_player(info: Dictionary) -> void:
 	var user_id := int(info.get("userId", 0))
 	if user_id == Session.userId:
 		return  # this player is already on screen
 	if remote_players.has(user_id):
-		_remove_remote_player(user_id)  # an old copy (e.g. reconnected): replace it
+		_remove_remote_player(user_id)  # an old connection: replace it
 
 	var player = PLAYER_SCENE.instantiate()
 	player.is_local = false
@@ -138,3 +174,19 @@ func _remove_remote_player(user_id: int) -> void:
 func _clear_remote_players() -> void:
 	for user_id in remote_players.keys():
 		_remove_remote_player(user_id)
+
+# Shows a short notice by the chat box for NOTICE_WAIT seconds, then fades it out; a new notice replaces the old one.
+func _show_chat_notice(text:String)-> void:
+	if notice_tween:
+		notice_tween.kill()
+	chat_notice.text = text
+	chat_notice.visible = true
+	chat_notice.modulate.a = 1.0
+	notice_tween = chat_notice.create_tween()
+	notice_tween.tween_interval(NOTICE_WAIT)
+	notice_tween.tween_property(chat_notice, "modulate:a", 0.0, 0.5)
+	notice_tween.tween_callback(func(): chat_notice.visible = false)
+
+# Logs the player out (server session, "remember me", map) and goes back to the splash screen.
+func _on_btn_logout_pressed() -> void:
+	Network.logout()

@@ -4,6 +4,7 @@ import { createAccount, login, requestPasswordReset, verifyResetCode, resetPassw
 import { validateSession, deleteSession } from "./sessions.js";
 import { pool } from "./db.js";
 import { joinWorld, movePlayer, leaveWorld } from "./world.js";
+import { handleChat } from "./chat.js";
 
 // Initialize the WebSocket server
 const PORT = Number(process.env.PORT ?? 3103);
@@ -29,7 +30,7 @@ function setSocketUser(socket: WebSocket, userId: number, token: string) {
     for (const [otherSocket, otherUserId] of socketUsers) {
         if (otherUserId === userId && otherSocket !== socket) {
             const oldToken = socketTokens.get(otherSocket);
-            // Only if it's a DIFFERENT token: two game windows sharing one session.txt use the same token,
+            // Only if it's a DIFFERENT token: two windows sharing one session.txt use the same token,
             // and deleting it would also log out the socket that is logging in right now.
             if (oldToken && oldToken !== token){
                 deleteSession(oldToken).catch((e) => console.error("Kick: failed to delete old session", e));
@@ -94,6 +95,7 @@ wsServer.on("connection", (socket) => {
                     send(socket, {type: "create_account_result", ...result});
                     break;
                 }
+
                 // Checks the username and password and sends back a session token
                 case "login": {
                     const failures = loginFailures.get(socket);
@@ -114,6 +116,7 @@ wsServer.on("connection", (socket) => {
                     send(socket, {type: "login_result", ...result});
                     break;
                 }
+
                 // Checks saved tokens; if it's still valid, remembers this socket's user and sends back their username and character
                 case "resume_session":{
                     const userId = await validateSession(message.token);
@@ -126,12 +129,14 @@ wsServer.on("connection", (socket) => {
                                 username: profile.username, 
                                 character:{skin: profile.skin, hair: profile.hair, eyes: profile.eyes} // TODO: next checkpoint: top: profile.top, bottom: profile.bottom
                             });                        
-                        }else{
+                        } else {
                             send(socket, {
-                                type: "resume_session_result", success: false});
+                            type: "resume_session_result", success: false});
                         }
-                    }                    
                     break;
+                }                    
+                    
+                    
                 // Logs the socket out: deletes its session from the database and forgets user 
                 case "logout":{
                     await deleteSession(message.token);
@@ -154,12 +159,14 @@ wsServer.on("connection", (socket) => {
                     send(socket, {type: "request_password_reset_result", success: true});
                     break;
                 }
+
                 // Checks the emailed code on success the reply includes resetToken
                 case "verify_reset_code": {
                     const result = await verifyResetCode(message.email, message.code);
                     send(socket, {type: "verify_reset_code_result", ...result});
                     break;
                 }
+
                 // Sets the new password
                 case "reset_password": {
                     const result = await resetPassword(message.reset_token, message.new_password);
@@ -174,12 +181,23 @@ wsServer.on("connection", (socket) => {
                     joinWorld(socket, userId, await getUserProfile(userId), message.x, message.y);
                     break;
                 }
+
                 // Walks the player toward the point they clicked; ignored if this socket isn't logged in.
                 case "move": {
                     const userId = socketUsers.get(socket);
                     if (userId) movePlayer(socket, userId, message.x, message.y);
                     break;
                 }
+
+                // Sends a chat message to everyone on the map
+                case "chat":{
+                    const userId = socketUsers.get(socket);
+                    if(userId){
+                        handleChat(socket, userId, message.text);
+                    }
+                    break;
+                }
+
                 default:
                     send(socket, {type: "error", error: `Unknown message type: ${message.type}`});
             }

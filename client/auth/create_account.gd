@@ -44,7 +44,6 @@ func _on_message_received(data: Dictionary) -> void:
 		$CanvasLayer/OuterPanel/InputPassword.clear()
 
 
-
 # Checks the username and password against the server's rules and returns an error message, or "" if both are fine.
 func validate_creds(username: String, password: String) -> String:
 	if username_check.search(username.strip_edges()) == null:
