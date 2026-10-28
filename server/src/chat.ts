@@ -8,7 +8,7 @@
 //   server -> sender   chat_rejected  {reason}                     only the sender sees why it wasn't sent
 //
 import { WebSocket } from "ws";
-import { findBlockedPhrase } from "./chatFilter.js";
+import { findBlockedPhrase, containsLink } from "./chatFilter.js";
 import { getWorldUsername, broadcastToWorld } from "./world.js";
 
 const MAX_CHAT_LENGTH = 48;   
@@ -37,8 +37,8 @@ export function handleChat(socket: WebSocket, userId: number, chatMsg: unknown):
 
     let text = chatMsg.normalize("NFC");
     text = text.replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g, "")    // remove invisible and direction characters
-    text = text.replace(/[\u0000-\u001F\u007F]/g, " ")    // newlines, tabs and other control characters
-    text = text.replace(/\s+/g, " ").trim()               // many spaces -> one
+    text = text.replace(/[\u0000-\u001F\u007F]/g, " ")                             // newlines, tabs and other control characters
+    text = text.replace(/\s+/g, " ").trim()                                        // many spaces -> one
     if (text.length === 0) return;
     if ([...text].length > MAX_CHAT_LENGTH){
         reject(socket, "Message is too long (max 48 characters).");
@@ -53,6 +53,14 @@ export function handleChat(socket: WebSocket, userId: number, chatMsg: unknown):
     }
     times.push(now);
     recentMessages.set(userId, times);
+
+    // Links are mostly scams, phishing and porn spam, and players can't check them before clicking (rule R4).
+    // It goes after the rate limit, so spamming links still counts.
+    if (containsLink(text)){
+        console.log(`[chat] link blocked from user ${userId}`);
+        reject(socket, "Links aren't allowed in chat.");
+        return;
+    }
 
     const blocked = findBlockedPhrase(text);
     if(blocked){

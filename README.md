@@ -57,7 +57,7 @@ club-tiger/
 │   ├── src/sessions.ts        Session tokens: create, validate, revoke, cleanup
 │   ├── src/world.ts           Players on the map and movement sync
 │   ├── src/chat.ts            Chat (in progress)
-│   ├── src/chatFilter.ts      Chat word filter (in progress)
+│   ├── src/chatFilter.ts      Chat word and link filter
 │   ├── src/data/              Password reset email template
 │   ├── src/db.ts              Database connection
 │   └── sql/                   Database setup
@@ -102,3 +102,8 @@ Forgot your password? Click **Forgot password?** on the sign-in screen and a one
 ## Project status
 
 Club Tiger is a work in progress.
+
+
+## Credits
+
+- Chat's blocked-term list (`server/src/data/blocked_terms.json`) is a short selection from [google-profanity-words](https://github.com/coffee-and-fun/google-profanity-words) by Robert James Gabriel / Coffee & Fun LLC, used under the MIT License. See [`server/src/LICENSE`](server/src/LICENSE). Extra entries were added for an adult audience (harassment, slurs and explicit sexual terms).

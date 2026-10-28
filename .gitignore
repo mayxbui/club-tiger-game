@@ -7,3 +7,22 @@
 
 *.pem
 /vm-club-tiger_key.pem
+
+en.LICENSE.txt
+export_blocked_words.py
+
+# dependencies
+node_modules/
+
+# database
+*.db
+*.sql
+*.db-journal
+*.sqlite
+*.sqlite3
+*.dump
+*.sql.gz
+server/sql/
+
+# tests
+server/src/test/
