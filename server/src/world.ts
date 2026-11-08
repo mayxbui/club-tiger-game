@@ -1,8 +1,4 @@
-import { WebSocket } from "ws";
-import { forgetChatUser } from "./chat.js";
-
-// Multiplayer map (logic in world.ts)
-// index.ts checks who the socket belongs to and calls joinWorld / movePlayer / leaveWorld and
+// Multiplayer map: index.ts checks who the socket belongs to and calls joinWorld / movePlayer / leaveWorld and
 // everything else here is PRIVATE: This file must never import from index.ts
 
     //   client -> server  join_world  {x, y}                  sent when the map opens (and again after a reconnect)
@@ -11,12 +7,16 @@ import { forgetChatUser } from "./chat.js";
     //   server -> others  player_joined  PlayerInfo
     //   server -> others  player_moved   {userId, fromX, fromY, toX, toY}
     //   server -> others  player_left    {userId}
+    //   server -> others  player_updated {userId, username, character}   after a profile edit (profile.ts)
     //   PlayerInfo = {userId, username, character: {skin, hair, eyes}, x, y, toX, toY}
 
+import { WebSocket } from "ws";
+import { forgetChatUser } from "./chat.js";
 
 // Must match SPEED in client/player/player.gd (pixels per second).
 const PLAYER_SPEED = 300;
-const MAP_BOUNDS = { minX: 0, maxX: 1152, minY: 0, maxY: 648 };
+// World boundary: 1920x1080 minus margin, so the character (head above, name tag below) is never cut off at the screen edge. Must match EDGE_MARGIN in client/map/world_map.gd.
+const MAP_BOUNDS = { minX: 60, maxX: 1920 - 60, minY: 130, maxY: 1080 - 100 };
 const MAX_MOVES_PER_SECOND = 10;
 
 type Character = { skin: number; hair: number; eyes: number };
@@ -51,6 +51,7 @@ function currentPosition(p: WorldPlayer): { x: number; y: number } {
     };
 }
 
+// Builds what other clients are told about a player, with their position right now.
 function playerInfo(userId: number, p: WorldPlayer): PlayerInfo {
     const position = currentPosition(p);
     return {
@@ -81,6 +82,7 @@ function isValidPoint(x: unknown, y: unknown): boolean {
         && y >= MAP_BOUNDS.minY && y <= MAP_BOUNDS.maxY;
 }
 
+// Puts a player on the map at (x, y), sends them everyone else (world_state) and tells the others they joined.
 export function joinWorld(
     socket: WebSocket,
     userId: number,
@@ -111,6 +113,7 @@ export function joinWorld(
     broadcast({ type: "player_joined", ...playerInfo(userId, player) }, userId);
 }
 
+// Starts walking a player toward (x, y) from where they are now, and tells the others. Rate-limited.
 export function movePlayer(socket: WebSocket, userId: number, x: unknown, y: unknown): void {
     const p = worldPlayers.get(userId);
     if (!p || p.socket !== socket) return;   // not on the map, or an old socket that was replaced
@@ -131,6 +134,7 @@ export function movePlayer(socket: WebSocket, userId: number, x: unknown, y: unk
     broadcast({ type: "player_moved", userId, fromX: p.fromX, fromY: p.fromY, toX: p.toX, toY: p.toY }, userId);
 }
 
+// Takes this socket's player off the map and tells the others.
 export function leaveWorld(socket: WebSocket): void {
     for (const [userId, p] of worldPlayers) {
         if (p.socket === socket) {
@@ -148,6 +152,17 @@ export function getWorldUsername(socket: WebSocket, userId: number): string | nu
     return player && player.socket === socket?player.username:null
 }
 
+// Sends a message to everyone on the map, including the sender.
 export function broadcastToWorld(message: unknown): void{
     broadcast(message, -1);
+}
+
+// Saves a player's new username and look (after a profile edit) and tells everyone else on the map, so they redraw
+// that player. Do nothing if the player isn't on the map; they'll show the new look when they join.
+export function updateWorldPlayer(userId: number, username: string, character: Character): void {
+    const p = worldPlayers.get(userId);
+    if (!p) return;
+    p.username = username;
+    p.character = character;
+    broadcast({ type: "player_updated", userId, username, character }, userId);
 }

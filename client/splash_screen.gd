@@ -3,7 +3,7 @@ extends Node2D
 const SESSION_FILE := "user://session.txt"
 const CONNECT_TIMEOUT_SECONDS := 3.0
 const CONNECT_CHECK_SECONDS := 0.1
-# Token read from SESSION_FILE; kept here because the server doesn't send it back in resume_session_result.
+# Token read from SESSION_FILE here because the server doesn't send it back in resume_session_result.
 var token := ""
 # Turn off in the Inspector to always show the splash buttons while testing.
 @export var auto_resume := true

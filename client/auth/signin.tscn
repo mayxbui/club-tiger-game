@@ -1,65 +1,75 @@
 [gd_scene format=3 uid="uid://bwwa8qevp05ef"]
 
 [ext_resource type="Script" uid="uid://c77214uyuxkbb" path="res://client/auth/signin.gd" id="1_signin"]
+[ext_resource type="Texture2D" uid="uid://bgx08q40r8jqb" path="res://client/assets/backgrounds/sign_up.png" id="2_6ndeg"]
 [ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="2_yyyy5"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uaicx"]
-bg_color = Color(1, 0.89411765, 0.35686275, 1)
+[ext_resource type="Theme" uid="uid://1d8kr2ebnkqb" path="res://client/assets/base-theme.tres" id="3_j6t6f"]
+[ext_resource type="Texture2D" uid="uid://d253r1ptsca2j" path="res://client/assets/input/user-input-white.png" id="4_6ndeg"]
+[ext_resource type="Texture2D" uid="uid://ium1m6lb1cmh" path="res://client/assets/buttons/btn-lg-black.png" id="4_svile"]
+[ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="4_uct0n"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_17ycr"]
 font = ExtResource("2_yyyy5")
+font_size = 25
 font_color = Color(0, 0, 0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ee1sm"]
-bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_vgonx"]
 font = ExtResource("2_yyyy5")
+font_size = 25
 font_color = Color(0, 0, 0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_70tne"]
-bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_yyyy5"]
 font = ExtResource("2_yyyy5")
 font_size = 88
 font_color = Color(0, 0, 0, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h48sj"]
-bg_color = Color(0.6, 0.6, 0.6, 0)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color(0, 0, 0, 1)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_6ndeg"]
+texture = ExtResource("4_svile")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_svile"]
+texture = ExtResource("4_6ndeg")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_uct0n"]
+texture = ExtResource("4_6ndeg")
 
 [node name="Signin" type="Node2D" unique_id=1175616778]
 script = ExtResource("1_signin")
 
-[node name="Panel" type="Panel" parent="." unique_id=843266333]
-offset_right = 1158.0
-offset_bottom = 658.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_uaicx")
+[node name="Panel" type="Sprite2D" parent="." unique_id=242068133]
+position = Vector2(967, 536)
+texture = ExtResource("2_6ndeg")
+metadata/_edit_lock_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=655413595]
-offset_left = 379.0
-offset_top = 182.0
-offset_right = 789.0
-offset_bottom = 384.0
+propagate_maximum_size = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 743.0
+offset_top = 302.0
+offset_right = 1216.0
+offset_bottom = 711.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
-size_flags_vertical = 4
+size_flags_vertical = 3
+offset_transform_position = Vector2(0.275, 0)
+theme = ExtResource("3_j6t6f")
+theme_override_constants/separation = 25
 alignment = 1
 
 [node name="LabelUsername" type="Label" parent="VBoxContainer" unique_id=1946063595]
 layout_mode = 2
+theme = ExtResource("3_j6t6f")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
 text = "Username/Email:"
 label_settings = SubResource("LabelSettings_17ycr")
 
 [node name="InputUsername" type="LineEdit" parent="VBoxContainer" unique_id=607260242]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_ee1sm")
-placeholder_text = "Enter your username/email"
+theme = ExtResource("3_j6t6f")
+placeholder_text = "Enter your username or email"
 backspace_deletes_composite_character_enabled = true
 clear_button_enabled = true
 icon_expand_mode = 2
@@ -67,13 +77,13 @@ icon_expand_mode = 2
 [node name="LabelPassword" type="Label" parent="VBoxContainer" unique_id=25650528]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 30
 text = "Password:"
 label_settings = SubResource("LabelSettings_vgonx")
 
 [node name="InputPassword" type="LineEdit" parent="VBoxContainer" unique_id=583555725]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_70tne")
+theme = ExtResource("3_j6t6f")
 placeholder_text = "Enter your password"
 backspace_deletes_composite_character_enabled = true
 clear_button_enabled = true
@@ -84,66 +94,89 @@ icon_expand_mode = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 414.0
-offset_top = 375.0
-offset_right = 743.0
-offset_bottom = 406.0
+offset_left = 752.0
+offset_top = 665.5
+offset_right = 1201.0
+offset_bottom = 705.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 40
 
 [node name="CheckboxRemember" type="CheckBox" parent="HBoxContainer" unique_id=1959946822]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.19215687, 0.18039216, 0.1764706, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_uct0n")
+theme_override_font_sizes/font_size = 25
 text = "Remember me"
 
 [node name="BtnForgot" type="Button" parent="HBoxContainer" unique_id=1764906492]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.41324574, 0.41324577, 0.41324574, 1)
+theme_override_colors/font_color = Color(0.19215687, 0.18039216, 0.1764706, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_uct0n")
+theme_override_font_sizes/font_size = 25
 text = "Forgot password?"
 flat = true
 
 [node name="LabelTitle" type="Label" parent="." unique_id=1964316427]
-offset_left = 3.0
-offset_top = 44.0
-offset_right = 1155.0
-offset_bottom = 165.0
+offset_left = 394.0
+offset_top = 162.0
+offset_right = 1546.0
+offset_bottom = 283.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 88
-text = "Club Tiger"
+theme_override_fonts/font = ExtResource("2_yyyy5")
+theme_override_font_sizes/font_size = 30
+text = "Sign in"
 label_settings = SubResource("LabelSettings_yyyy5")
 horizontal_alignment = 1
 vertical_alignment = 1
-uppercase = true
 
 [node name="BtnLogin" type="Button" parent="." unique_id=1226966643]
-offset_left = 419.0
-offset_top = 420.0
-offset_right = 738.0
-offset_bottom = 476.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_h48sj")
+offset_left = 748.0
+offset_top = 725.0
+offset_right = 1206.0
+offset_bottom = 803.0
+theme = ExtResource("3_j6t6f")
+theme_override_colors/font_color = Color(0.99567145, 0.8987797, 0.5378617, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_yyyy5")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxTexture_6ndeg")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_svile")
+theme_override_styles/hover = SubResource("StyleBoxTexture_uct0n")
 text = "Login"
 
 [node name="BtnCreate" type="Button" parent="." unique_id=1943737524]
-offset_left = 419.0
-offset_top = 490.0
-offset_right = 738.0
-offset_bottom = 530.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+offset_left = 676.0
+offset_top = 810.0
+offset_right = 1267.0
+offset_bottom = 856.0
+theme_override_colors/font_color = Color(0.19215687, 0.18039216, 0.1764706, 1)
 theme_override_colors/font_focus_color = Color(0.032343768, 0.075806685, 0.02124273, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_color = Color(0.31861475, 0.25273195, 0.09363092, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.33393767, 0.28209212, 0.13798946, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_uct0n")
+theme_override_font_sizes/font_size = 25
 text = "Don't have an account? Create an account"
 flat = true
 
 [node name="LabelDebug" type="Label" parent="." unique_id=783612726]
-offset_left = 421.0
-offset_top = 526.0
-offset_right = 748.0
-offset_bottom = 586.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+offset_left = 679.0
+offset_top = 875.0
+offset_right = 1268.0
+offset_bottom = 935.0
+theme_override_colors/font_color = Color(0.6649592, 0.15009221, 0.1480779, 1)
+theme_override_fonts/font = ExtResource("4_uct0n")
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
 autowrap_mode = 2
 
 [node name="TimerDebug" type="Timer" parent="." unique_id=989151270]

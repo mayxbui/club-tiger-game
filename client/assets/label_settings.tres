@@ -1,0 +1,11 @@
+[gd_resource type="LabelSettings" format=3 uid="uid://bieh15rrbajlw"]
+
+[ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="1_ccqmy"]
+
+[resource]
+font = ExtResource("1_ccqmy")
+font_size = 60
+font_color = Color(0, 0, 0, 1)
+shadow_size = 15
+shadow_color = Color(0, 0, 0, 0.08235294)
+shadow_offset = Vector2(1.22, 1)

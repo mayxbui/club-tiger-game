@@ -39,8 +39,14 @@ chat, and decorate their own dorm room and make friends. -->
 Godot client  <── WebSocket ──>  Node.js server  <──>  PostgreSQL
 ```
 
-<!-- ### Project structure
+[![Architecture diagram](https://gitdiagram.com/diagram-badge.svg)](https://gitdiagram.com/mayxbui/club-tiger-game?utm_source=readme&utm_medium=badge)
 
+### Project structure
+
+[![Architecture diagram of mayxbui/club-tiger-game](https://gitdiagram.com/mayxbui/club-tiger-game/diagram.png)](https://gitdiagram.com/mayxbui/club-tiger-game?utm_source=readme&utm_medium=picture)
+
+
+<!--
 ```
 club-tiger/
 ├── project.godot              Godot project (main scene: client/splash_screen.tscn)

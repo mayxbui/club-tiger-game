@@ -5,6 +5,9 @@ import { validateSession, deleteSession } from "./sessions.js";
 import { pool } from "./db.js";
 import { joinWorld, movePlayer, leaveWorld } from "./world.js";
 import { handleChat } from "./chat.js";
+import { getFriendsList, respondToRequest, sendFriendRequest, unfriend, starFriend, blockUser, unblockUser,
+    searchUsers } from "./friends.js";
+import { updateProfile } from "./profile.js";
 
 // Initialize the WebSocket server
 const PORT = Number(process.env.PORT ?? 3103);
@@ -30,8 +33,7 @@ function setSocketUser(socket: WebSocket, userId: number, token: string) {
     for (const [otherSocket, otherUserId] of socketUsers) {
         if (otherUserId === userId && otherSocket !== socket) {
             const oldToken = socketTokens.get(otherSocket);
-            // Only if it's a DIFFERENT token: two windows sharing one session.txt use the same token,
-            // and deleting it would also log out the socket that is logging in right now.
+            // Only delete if it's a DIFFERENT token
             if (oldToken && oldToken !== token){
                 deleteSession(oldToken).catch((e) => console.error("Kick: failed to delete old session", e));
             }
@@ -43,6 +45,16 @@ function setSocketUser(socket: WebSocket, userId: number, token: string) {
     }
     socketUsers.set(socket, userId);
     socketTokens.set(socket,token);
+}
+
+// Returns the live socket of a logged-in user, or undefined if they're offline.
+// friends.ts gets this function passed in
+function findSocket(userId: number): WebSocket|undefined {
+    for(const [otherSocket, otherUserId] of socketUsers) {
+        if (otherUserId === userId){
+            return otherSocket;
+        }
+    }
 }
 
 // Failed logins per socket
@@ -136,7 +148,7 @@ wsServer.on("connection", (socket) => {
                     break;
                 }                    
                     
-                    
+
                 // Logs the socket out: deletes its session from the database and forgets user 
                 case "logout":{
                     await deleteSession(message.token);
@@ -177,7 +189,12 @@ wsServer.on("connection", (socket) => {
                 // Puts a logged-in player on the map; the userId always comes from socketUsers, never from the message.
                 case "join_world": {
                     const userId = socketUsers.get(socket);
-                    if (!userId) { send(socket, {type: "error", error: "Please sign in first."}); break; }
+                    if (!userId) { 
+                        send(socket, {
+                            type: "error", 
+                            error: "Please sign in."});
+                        break;
+                    }
                     joinWorld(socket, userId, await getUserProfile(userId), message.x, message.y);
                     break;
                 }
@@ -190,11 +207,103 @@ wsServer.on("connection", (socket) => {
                 }
 
                 // Sends a chat message to everyone on the map
-                case "chat":{
+                case "chat": {
                     const userId = socketUsers.get(socket);
-                    if(userId){
-                        handleChat(socket, userId, message.text);
+                    if(userId) handleChat(socket, userId, message.text);
+                    break;
+                }
+
+                // Friend cases: userId always comes from socketUsers, never from the message. Each friends.ts function
+                //   sends *_result reply. They're awaited so a DB error reaches the catch below.
+                //   A signed-out socket gets an error instead.
+                // Sends a friend request to a player by username
+                case "friend_request":{
+                    const userId = socketUsers.get(socket);
+                    if (!userId) {
+                        send(socket, {
+                            type: "error",
+                            error: "Please sign in."
+                        });
+                        break;
                     }
+                    await sendFriendRequest(socket, userId, message.username, findSocket);
+                    break;
+                }
+
+                // Accepts or declines a friend request sent to this player
+                case"friend_respond":{
+                    const userId = socketUsers.get(socket);
+                    if (!userId) {
+                        send(socket, {
+                            type: "error",
+                            error: "Please sign in."
+                        });
+                        break;
+                    }
+                    await respondToRequest(socket, userId, message.requestId, message.accept, findSocket);
+                    break;
+                }
+
+                // Sends this player's friends and pending requests
+                case "friends_list":{
+                    const userId = socketUsers.get(socket);
+                    if (!userId) {
+                        send(socket, {
+                            type: "error",
+                            error: "Please sign in."
+                        });
+                        break;
+                    }
+                    await getFriendsList(socket, userId, findSocket);
+                    break;
+                }
+
+                // The rest of the player card. Same rule: userId from socketUsers, never from the message.
+                // Clear a friendship
+                case "unfriend": {
+                    const userId = socketUsers.get(socket);
+                    if (!userId) { send(socket, { type: "error", error: "Please sign in." }); break; }
+                    await unfriend(socket, userId, message.userId, findSocket);
+                    break;
+                }
+
+                // Stars or unstars a friend (only this player sees it)
+                case "star_friend": {
+                    const userId = socketUsers.get(socket);
+                    if (!userId) { send(socket, { type: "error", error: "Please sign in." }); break; }
+                    await starFriend(socket, userId, message.userId, message.starred);
+                    break;
+                }
+
+                // Blocks a player (and ends any friendship or request with them)
+                case "block_user": {
+                    const userId = socketUsers.get(socket);
+                    if (!userId) { send(socket, { type: "error", error: "Please sign in." }); break; }
+                    await blockUser(socket, userId, message.userId);
+                    break;
+                }
+
+                // Removes a block
+                case "unblock_user": {
+                    const userId = socketUsers.get(socket);
+                    if (!userId) { send(socket, { type: "error", error: "Please sign in." }); break; }
+                    await unblockUser(socket, userId, message.userId);
+                    break;
+                }
+
+                // Finds players by the start of their username, for the search pop-up
+                case "search_users": {
+                    const userId = socketUsers.get(socket);
+                    if (!userId) { send(socket, { type: "error", error: "Please sign in." }); break; }
+                    await searchUsers(socket, userId, message.query);
+                    break;
+                }
+
+                // Saves a new username and/or look from the edit page
+                case "update_profile": {
+                    const userId = socketUsers.get(socket);
+                    if (!userId) { send(socket, { type: "error", error: "Please sign in." }); break; }
+                    await updateProfile(socket, userId, message.username, message.character);
                     break;
                 }
 
@@ -202,7 +311,6 @@ wsServer.on("connection", (socket) => {
                     send(socket, {type: "error", error: `Unknown message type: ${message.type}`});
             }
         } catch(err){
-            // Logs the full error for you and sends the player a generic message, so database details aren't exposed
             console.error("Error message:", err);
             send(socket, {type: "error", error: "Something went wrong. Please try again."});
         }

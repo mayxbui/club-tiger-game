@@ -1,27 +1,40 @@
 extends Node2D
 
 const PLAYER_SCENE := preload("res://client/player/player.tscn")
+
+const KEY_SEND_SECONDS := 0.12   # how often a held key sends "move"; ~8 per second, under the server's
+const KEY_LOOKAHEAD := 0.12      # how far ahead to aim, in seconds of walking (300 px/s * 0.12 = 36 px)
+
 const SNAP_DISTANCE := 60.0
 const NOTICE_WAIT := 2.0
 # Longest chat message; must match MAX_CHAT_LENGTH in server/src/chat.ts.
 const MAX_CHAT_LENGTH := 48
-# The countdown turns red when this many characters (or fewer) are left.
 const CHAT_WARN_LEFT := 10
+# Where the player can walk: the 1920x1080 screen minus a margin
+# Must match MAP_BOUNDS in server/src/world.ts.
+const EDGE_MARGIN_SIDE := 60.0
+const EDGE_MARGIN_TOP := 130.0
+const EDGE_MARGIN_BOTTOM := 100.0
+const PLAY_AREA := Rect2(EDGE_MARGIN_SIDE, EDGE_MARGIN_TOP, 1920.0 - 2 * EDGE_MARGIN_SIDE, 1080.0 - EDGE_MARGIN_TOP - EDGE_MARGIN_BOTTOM)
 # Random spawn point along the bottom path
-var spawnX = randf_range(200,930)
-var spawnY = 430
+var spawnX = randf_range(200,1820)
+var spawnY = 900
 # Every other player on the map: userId (int) -> their Player node under $Players.
 var remote_players := {}
 var notice_tween: Tween
 @onready var chat_input := $ChatUI/ChatPanel/VBoxContainer/HBoxContainer/ChatInput
 @onready var chat_notice := $ChatUI/ChatPanel/VBoxContainer/ChatNotice
+@onready var player_card: PlayerCard = $PlayerCard
 # Test chat on client. Set to false to test on server. 
 const OFFLINE_CHAT_TEST := false
 
-# Server side (chat.ts, chatFilter.ts).
+# Server side (chat.ts, chatFilter.ts):
 #   send     {"type": "chat", "text": ...}
 #   receive  {"type": "chat_message", "userId", "username", "text"}   -> bubble above that player (including you)
 #            {"type": "chat_rejected", "reason"}                      -> red notice, only you see it
+
+# Server side (world.ts): player_updated {userId, username, character} -> redraw that player after a profile edit.
+# Friends and profile messages are handled by the player card (client/player-card/player_card.gd).
 
 # Spawns the local player at a random point, draws their saved character and username, and joins the shared world.
 func _ready() -> void:
@@ -39,6 +52,9 @@ func _ready() -> void:
 	chat_input.text_changed.connect(func(text):
 		_update_chat_counter(text.length()))
 	_update_chat_counter(0)
+	player_card.profile_saved.connect(_on_profile_saved)
+	# The tiger button opens and closes the player card.
+	$BtnPlayerCard.pressed.connect(player_card.toggle)
 
 # Shows how many characters are LEFT (counts down from MAX_CHAT_LENGTH), red when only CHAT_WARN_LEFT or fewer remain.
 func _update_chat_counter(length: int) -> void:
@@ -79,18 +95,63 @@ func _join_world() -> void:
 	var pos: Vector2 = $Players/Player.global_position
 	Network.send({"type": "join_world", "x": pos.x, "y": pos.y})
 
+# Keyboard: key_held is true while an arrow/WASD key moves the player; key_send_timer spaces out the "move" sends.
+var key_send_timer := 0.0
+var key_held := false
+
+# Ends keyboard focus: stops the player where they stand and tells the server, so every screen stops at the same spot.
+func _stop_key_movement():
+	var player = $Players/Player
+	player.move_to(player.global_position)
+	key_held = false
+	key_send_timer = 0.0
+	Network.send({
+		"type":"move",
+		"x": player.global_position.x,
+		"y": player.global_position.y
+	})
+
+# Walks the local player with the arrow keys / WASD (Input Map: Left, Right, Up, Down). 
+func _physics_process(delta: float) -> void:
+	# Typing in the chat or a player-card text box (search, username) must not walk the player.
+	if get_viewport().gui_get_focus_owner() is LineEdit:
+		return
+	else:
+		var dir := Input.get_vector("Left","Right","Up","Down")
+		if dir != Vector2.ZERO:
+			var player = $Players/Player
+			var target: Vector2 = _clamp_to_play_area(player.global_position + dir * player.SPEED * KEY_LOOKAHEAD)
+			if not Geometry2D.is_point_in_polygon($Walkable.to_local(target), $Walkable.polygon):
+				return
+			player.move_to(target)
+			key_held = true
+			key_send_timer -= delta
+			if key_send_timer <= 0:
+				Network.send({
+					"type":"move",
+					"x": target.x,
+					"y": target.y
+				})
+				key_send_timer = KEY_SEND_SECONDS
+		elif key_held:
+			_stop_key_movement()
+
 # Walks the local player to a left click inside the walkable area.
-# _unhandled_input (not _input) means clicks on UI like the chat box are used by the UI and don't move the player.
-# Press Enter to open the chat box; clicking the map closes it.
+# _unhandled_input (not _input): clicks on UI like the chat box are used by the UI and don't move the player.
+
+# Press Enter to open the chat box; click the map to exit.
 func _unhandled_input(event: InputEvent) -> void:
 	if(event is InputEventKey and event.pressed and event.keycode == KEY_ENTER and not chat_input.has_focus()):
 		chat_input.grab_focus()
+		if key_held:
+			_stop_key_movement()
 		get_viewport().set_input_as_handled()
 		return
 		
 	if(event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed):
 		chat_input.release_focus()
 		var click := get_global_mouse_position()
+		click = _clamp_to_play_area(click)
 		if not Geometry2D.is_point_in_polygon($Walkable.to_local(click), $Walkable.polygon):
 			return
 		$Players/Player.move_to(click)
@@ -126,6 +187,8 @@ func _on_message_received(data: Dictionary) -> void:
 		"resume_session_result":
 			if data.get("success", false):
 				_join_world()
+				# Requests may have arrived while the connection was down (their pushes were lost), so reload the list.
+				player_card.refresh()
 		# Show chat as a bubble above that player.
 		"chat_message":
 			var id := int(data.get("userId",0))
@@ -135,7 +198,13 @@ func _on_message_received(data: Dictionary) -> void:
 		# Only this player gets this (blocked word, too long, too fast): show the reason as a red notice.
 		"chat_rejected":
 			_show_chat_notice(str(data.get("reason", "Message not sent.")))
-			
+		# Another player saved a new look or username on their player card.
+		"player_updated":
+			var updated = remote_players.get(int(data.get("userId", 0)))
+			if updated != null:
+				updated._apply_character(data.get("character", {}))
+				updated.set_username(str(data.get("username", "")))
+
 # Creates another player's character from the server's PlayerInfo ({userId, username, character, x, y, toX, toY}).
 func _add_remote_player(info: Dictionary) -> void:
 	var user_id := int(info.get("userId", 0))
@@ -185,3 +254,12 @@ func _show_chat_notice(text:String)-> void:
 # Logs the player out (server session, "remember me", map) and goes back to the splash screen.
 func _on_btn_logout_pressed() -> void:
 	Network.logout()
+
+# Moves a point inside PLAY_AREA, so a click or key walk near the edge stops where the character is fully on screen (the server rejects points outside the same area).
+func _clamp_to_play_area(point: Vector2) -> Vector2:
+	return point.clamp(PLAY_AREA.position, PLAY_AREA.end)
+
+# Redraws your own character after the player card saved a new look or username (Session is already updated).
+func _on_profile_saved(username: String, character: Dictionary) -> void:
+	$Players/Player._apply_character(character)
+	$Players/Player.set_username(username)

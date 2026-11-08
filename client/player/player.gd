@@ -4,12 +4,10 @@ extends CharacterBody2D
 @export var is_local := false
 
 @export var SPEED := 300.0
-@onready var body := $Skeleton
-@onready var skin := $Skeleton/Skin
-@onready var hair := $Skeleton/Hair
-@onready var eye := $Skeleton/Eye
-#@onready var top := $Skeleton/Top
-#@onready var bottom := $Skeleton/Bottom
+# (player_skeleton.tscn). Body is flipped to face left/right, and Skin's frame swaps for walking.
+@onready var skeleton: PlayerSkeleton = $Skeleton
+@onready var body: Node2D = $Skeleton/Body
+@onready var skin: Sprite2D = $Skeleton/Body/Skin
 
 var click_pos := Vector2.ZERO
 var moving := false
@@ -17,12 +15,11 @@ var step_timer := 0.0
 const IDLE_FRAME := 0
 const WALK_FRAME := 1
 const STEP_SECONDS := 0.1
-const ARRIVE := 4		#close enough to target (prevent lagging)
+const ARRIVE := 4		# close enough to target (prevent lagging)
 
-# Chat bubble text size; big because the whole Player is scaled to 0.345 (40 shows as ~14 px).
-const BUBBLE_FONT_SIZE := 40
-# Widest the bubble text gets before wrapping (before the 0.345 scale: 400 is about 138 px on screen).
-const BUBBLE_MAX_TEXT_WIDTH := 400.0
+const BUBBLE_FONT_SIZE := 60
+const BUBBLE_MAX_TEXT_WIDTH := 800.0
+const BUBBLE_TEXTURE := preload("res://client/player/bubble_chat_texture.tres")
 
 # Starts with the target on the player, so nothing moves until move_to() is called.
 func _ready():
@@ -32,6 +29,7 @@ func _ready():
 func move_to(click: Vector2)->void:
 	click_pos = click
 	moving = true
+
 const MAX_BUBBLES := 5
 const BUBBLE_WAIT := 3.0
 const BUBBLE_FADE := 0.5
@@ -58,25 +56,21 @@ func _physics_process(delta: float) -> void:
 		moving = false
 
 
-# Draws a saved character (e.g. Session.character); JSON numbers arrive as floats, so int() converts them, and missing keys fall back to 0.
+# Draws a saved character (e.g. Session.character) with the skeleton (player_skeleton.gd).
 func _apply_character(character: Dictionary) -> void:
-	change_skin(int(character.get("skin", 0)))
-	change_hair(int(character.get("hair", 0)))
-	change_eyes(int(character.get("eyes", 0)))
-	# Next checkpoint: once the Top and Bottom Sprite2D nodes exist (and their @onready lines above are uncommented),
-	# add matching handlers for them and call them here with character.get("top", 0) and character.get("bottom", 0).
+	skeleton.apply_character(character)
 
-# Shows the chosen skin tone by swapping the skin texture.
+# Shows the chosen skin tone (create_account.gd connects the customizer's signals to these three).
 func change_skin(id: int) -> void:
-	skin.texture = CharacterPresets.get_texture(CharacterPresets.SKIN, id)
+	skeleton.change_skin(id)
 
-# Shows the chosen hairstyle by swapping the hair texture.
-func change_hair(id:int) -> void:
-	hair.texture = CharacterPresets.get_texture(CharacterPresets.HAIR, id)
+# Shows the chosen hairstyle.
+func change_hair(id: int) -> void:
+	skeleton.change_hair(id)
 
-# Shows the chosen eyes by swapping the eye texture.
+# Shows the chosen eyes.
 func change_eyes(id: int) -> void:
-	eye.texture = CharacterPresets.get_texture(CharacterPresets.EYES, id)
+	skeleton.change_eyes(id)
 
 # Shows a player's name under their character; the map passes Session.username for the local player.
 func set_username(username: String) -> void:
@@ -88,17 +82,13 @@ func show_chat_bubble(text: String)->void:
 	var bubble := PanelContainer.new()
 	bubble.size_flags_horizontal = Control.SIZE_SHRINK_CENTER   # only as wide as its text, centered over the head
 		
-	var bubble_style := StyleBoxFlat.new()
-	bubble_style.bg_color = Color("d7d9daa6")
-	bubble_style.set_corner_radius_all(30)
-	bubble_style.set_content_margin_all(16)
 	bubble.add_theme_stylebox_override(
 		"panel",
-		bubble_style
+		BUBBLE_TEXTURE
 	)
 	var label := Label.new()
 	label.text = text
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	label.add_theme_font_size_override("font_size", BUBBLE_FONT_SIZE)
 	label.add_theme_color_override("font_color", Color.BLACK)

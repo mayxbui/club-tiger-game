@@ -33,6 +33,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 15
+alignment = 1
 
 [node name="Skin" type="Label" parent="VBoxContainer" unique_id=1330358059]
 layout_mode = 2
@@ -43,6 +44,7 @@ horizontal_alignment = 1
 [node name="SpriteSelector" parent="VBoxContainer" unique_id=747671734 instance=ExtResource("2_m4524")]
 layout_mode = 2
 size_flags_vertical = 3
+tooltip_auto_translate_mode = 2
 
 [node name="Hair" type="Label" parent="VBoxContainer" unique_id=1469677726]
 layout_mode = 2
@@ -53,6 +55,7 @@ horizontal_alignment = 1
 [node name="SpriteSelector2" parent="VBoxContainer" unique_id=1607263598 instance=ExtResource("2_m4524")]
 layout_mode = 2
 size_flags_vertical = 3
+tooltip_auto_translate_mode = 2
 
 [node name="Eyes" type="Label" parent="VBoxContainer" unique_id=1224644926]
 layout_mode = 2
@@ -63,3 +66,4 @@ horizontal_alignment = 1
 [node name="SpriteSelector3" parent="VBoxContainer" unique_id=1085624515 instance=ExtResource("2_m4524")]
 layout_mode = 2
 size_flags_vertical = 3
+tooltip_auto_translate_mode = 2

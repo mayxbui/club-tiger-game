@@ -4,33 +4,21 @@ import {createSession, hashToken} from "./sessions.js"
 import { randomBytes, randomInt } from "crypto";
 import { readFile } from "fs/promises";
 import nodemailer from "nodemailer";
+import { checkUsername, checkCharacter, type CharacterSelection } from "./validation.js";
 
-// Patterns for validating username and email
-const USERNAME_PATTERN =  /^[A-Za-z0-9_]{3,20}$/;
+export type { CharacterSelection };
+
 // Same rule as the email_type domain in schema.sql
 const EMAIL_PATTERN = /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
 const SALT_ROUND = 10;
 const MAX_PASSWORD_LENGTH = 72;
 
-// Must match the list sizes in client/player/character_presets.gd (SKINS, HAIRS, EYES)
-const SKIN_COUNT = 4;
-const HAIR_COUNT = 6;
-const EYES_COUNT = 5;
+// The option counts (SKIN_COUNT, ...) and the CharacterSelection type live in validation.ts.
 // const TOP_COUNT = 8;
 // const BOTTOM_COUNT = 8;
 
 const RESET_COOLDOWN = 60*1000;     // limit 1 minute
 const MAX_RESET_ATTEMPTS = 5;
-
-
-// The character options a player picked, each saved as a number (top and bottom come next checkpoint)
-export type CharacterSelection = {
-    skin?: number;
-    hair?: number;
-    eyes?: number;
-    // top?: number;
-    // bottom?: number;
-}
 
 // What createAccount and login return: the user's ID, username, token and (optionally) character on success, or an error message
 export type AuthResult =
@@ -54,10 +42,12 @@ export async function createAccount(
             error: "Missing username, email, or password."
         };
     }
-    if (!USERNAME_PATTERN.test(username.trim())){
-        return{
+    // Format and chat filter (validation.ts, shared with profile edits)
+    const usernameError = checkUsername(username);
+    if (usernameError) {
+        return {
             success: false,
-            error: "Missing or invalid username."
+            error: usernameError
         };
     }
     if (!EMAIL_PATTERN.test(email.trim().toLowerCase())){
@@ -73,30 +63,25 @@ export async function createAccount(
         };
     }
     // Reject character values that aren't whole numbers inside each option's range (missing values default to 0 below).
-    if (characters.skin !== undefined && (!Number.isInteger(characters.skin) || characters.skin < 0 || characters.skin >= SKIN_COUNT)) {
+    const characterError = checkCharacter(characters);
+    if (characterError) {
         return {
             success: false,
-            error: "Invalid skin selection."
+            error: characterError
         };
     }
-    if (characters.hair !== undefined && (!Number.isInteger(characters.hair) || characters.hair < 0 || characters.hair >= HAIR_COUNT)) {
-        return {
-            success: false,
-            error: "Invalid hair selection."
-        };
-    }
-    if (characters.eyes !== undefined && (!Number.isInteger(characters.eyes) || characters.eyes < 0 || characters.eyes >= EYES_COUNT)) {
-        return {
-            success: false,
-            error: "Invalid eyes selection."
-        };
-    }
-    
+
     // TODO: Next checkpoint : To finish top/bottom:
-    // 1. Uncomment TOP_COUNT / BOTTOM_COUNT and top?/bottom? in CharacterSelection at the top of this file.
+    // 1. Add TOP_COUNT / BOTTOM_COUNT and top?/bottom? to CharacterSelection in validation.ts, and check them in
+    //    checkCharacter there (then the commented checks below can be deleted).
     // 2. Add top and bottom to the INSERT INTO characters below ($5, $6 with characters.top ?? 0, characters.bottom ?? 0);
     //    the characters table already has both columns.
     // 3. SELECT c.top, c.bottom in login() and getUserProfile() (index.ts), and send them in resume_session_result.
+    // FIX (before you uncomment these two checks): they're missing the parentheses that skin/hair/eyes have above.
+    //   `&&` binds tighter than `||`, so `undefined !== undefined && ... || characters.top < 0 || ...` still runs the
+    //   range checks when top is missing, and TypeScript rejects `characters.top < 0` on a possibly-undefined value.
+    //   Write it like the skin check:
+    //     characters.top !== undefined && (!Number.isInteger(characters.top) || characters.top < 0 || characters.top >= TOP_COUNT)
     // if (characters.top !== undefined && !Number.isInteger(characters.top) || characters.top < 0 || characters.top >= TOP_COUNT) {
     //     return {
     //         success: false,

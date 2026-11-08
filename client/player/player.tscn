@@ -1,23 +1,18 @@
 [gd_scene format=3 uid="uid://dhd56c0gjjps"]
 
 [ext_resource type="Script" uid="uid://c7rpucjuj667a" path="res://client/player/player.gd" id="1_3qdwu"]
-[ext_resource type="Texture2D" uid="uid://q86c55hgybo4" path="res://client/assets/skin/shade0.png" id="2_iwtvl"]
-[ext_resource type="Texture2D" uid="uid://2m1qgwetpmti" path="res://client/assets/hair/hair3.png" id="3_172lf"]
+[ext_resource type="PackedScene" uid="uid://c8ipe7ahbtqpj" path="res://client/player/player_skeleton.tscn" id="2_skel"]
 [ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="5_172lf"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ee1sm"]
 size = Vector2(187, 99)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_hk56d"]
-load_path = "res://.godot/imported/eye4.png-3aad1fc74ecbba622d8a90a75131d498.ctex"
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hk56d"]
-bg_color = Color(0, 0, 0, 0.46666667)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_iycys"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_vmchv"]
 font = ExtResource("5_172lf")
 font_size = 30
-shadow_color = Color(0, 0, 0, 0.8235294)
+font_color = Color(0, 0, 0, 1)
 
 [node name="Player" type="CharacterBody2D" unique_id=1159748652]
 collision_layer = 2
@@ -27,39 +22,29 @@ script = ExtResource("1_3qdwu")
 position = Vector2(3, -13.5)
 shape = SubResource("RectangleShape2D_ee1sm")
 
-[node name="Skeleton" type="Node2D" parent="." unique_id=525518808]
-
-[node name="Skin" type="Sprite2D" parent="Skeleton" unique_id=804251127]
-texture = ExtResource("2_iwtvl")
-hframes = 2
-region_rect = Rect2(145.07495, 1179.2516, 1871.925, 422.99597)
-
-[node name="Hair" type="Sprite2D" parent="Skeleton" unique_id=92792687]
-position = Vector2(9, -102)
-texture = ExtResource("3_172lf")
-region_rect = Rect2(1884, 71, 188, 233)
-
-[node name="Eye" type="Sprite2D" parent="Skeleton" unique_id=1261590039]
-position = Vector2(21, -97)
-texture = SubResource("CompressedTexture2D_hk56d")
-region_rect = Rect2(328.98175, 519.45, 78.615906, 28.239807)
+[node name="Skeleton" parent="." unique_id=749264483 instance=ExtResource("2_skel")]
 
 [node name="LabelUsername" type="Label" parent="." unique_id=1046048194]
 offset_left = -83.0
 offset_top = 220.0
-offset_right = 124.0
-offset_bottom = 243.0
-theme_override_styles/normal = SubResource("StyleBoxFlat_hk56d")
+offset_right = 96.0
+offset_bottom = 262.0
+theme_override_constants/shadow_outline_size = 4
+theme_override_styles/normal = SubResource("StyleBoxEmpty_iycys")
 text = "username"
 label_settings = SubResource("LabelSettings_vmchv")
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="Bubbles" type="VBoxContainer" parent="." unique_id=758497292]
 z_index = 10
-offset_left = -113.0
-offset_top = -330.0
-offset_right = 223.0
-offset_bottom = -330.0
+offset_left = -240.0
+offset_top = -230.0
+offset_right = 360.0
+offset_bottom = -230.0
+grow_horizontal = 2
+grow_vertical = 0
 size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 10
+alignment = 2

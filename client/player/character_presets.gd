@@ -1,11 +1,11 @@
 class_name CharacterPresets
 extends Node
 
-# The one shared list of character options, used by both the customizer and player.gd.
-# The saved number for each part is the option's ID = its position in these arrays.
-# Rules:
-#   - Only ADD new options at the end. Never reorder or delete, or every saved character changes look.
-#   - The server's SKIN_COUNT / HAIR_COUNT / EYES_COUNT in server/src/auth.ts must equal SKIN.size(),
+# Shared list of character options, used by the customizer and player.gd.
+# Saved number for each part is the option's ID = its position in these arrays.
+# Notes:
+#   - Only add new options at the end. Never reorder or delete, or every saved character changes look.
+#   - The server's SKIN_COUNT / HAIR_COUNT / EYES_COUNT in server/src/validation.ts must equal SKIN.size(),
 #     HAIR.size() and EYES.size() (4, 6, 5).
 
 # Skins size: 454x425 (even width, so hframes = 2 splits it into two whole 227 px poses)

@@ -1,0 +1,111 @@
+[gd_scene format=3 uid="uid://7gulqypbu8px"]
+
+[ext_resource type="Script" uid="uid://vldwvcbdhefg" path="res://client/player-card/player_card.gd" id="1_card"]
+[ext_resource type="Texture2D" uid="uid://csft3vuo5q7cy" path="res://client/assets/page-card/Card.png" id="2_card"]
+[ext_resource type="Texture2D" uid="uid://duk1vt1cnm26t" path="res://client/assets/page-card/card-white.png" id="3_white"]
+[ext_resource type="Texture2D" uid="uid://cw0lh62u40fwx" path="res://client/assets/buttons/btn-edit.png" id="4_edit"]
+[ext_resource type="Texture2D" uid="uid://bj5semtccjge3" path="res://client/assets/buttons/btn-tiger.png" id="5_tiger"]
+[ext_resource type="Texture2D" uid="uid://dhur8rsf7ldpa" path="res://client/assets/buttons/btn-bell.png" id="6_bell"]
+[ext_resource type="Texture2D" uid="uid://dwsakfqlbchd6" path="res://client/assets/buttons/btn-ghost.png" id="7_ghost"]
+[ext_resource type="PackedScene" uid="uid://cnhosp8astsbi" path="res://client/player-card/edit_page.tscn" id="8_edit_page"]
+[ext_resource type="PackedScene" uid="uid://1i1mffe62i4p" path="res://client/player-card/friend_page.tscn" id="9_friend_page"]
+[ext_resource type="PackedScene" uid="uid://d3s335lwnydif" path="res://client/player-card/request_page.tscn" id="10_request_page"]
+[ext_resource type="PackedScene" uid="uid://cyph4g8pmv8bq" path="res://client/player-card/blocked_page.tscn" id="11_blocked_page"]
+[ext_resource type="Theme" uid="uid://1d8kr2ebnkqb" path="res://client/assets/base-theme.tres" id="12_base"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_card"]
+content_margin_left = 24.0
+content_margin_top = 24.0
+content_margin_right = 24.0
+content_margin_bottom = 24.0
+texture = ExtResource("2_card")
+texture_margin_left = 60.0
+texture_margin_top = 60.0
+texture_margin_right = 60.0
+texture_margin_bottom = 60.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_page"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+texture = ExtResource("3_white")
+texture_margin_left = 60.0
+texture_margin_top = 60.0
+texture_margin_right = 60.0
+texture_margin_bottom = 60.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bar"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tab"]
+content_margin_left = 6.0
+content_margin_top = 10.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
+
+[node name="PlayerCard" type="CanvasLayer" unique_id=2035569056]
+layer = 2
+visible = false
+script = ExtResource("1_card")
+
+[node name="Card" type="PanelContainer" parent="." unique_id=1201782627]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -790.0
+offset_top = -510.0
+offset_right = -30.0
+offset_bottom = 510.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_card")
+
+[node name="Tabs" type="TabContainer" parent="Card" unique_id=1318901553]
+layout_mode = 2
+theme_override_constants/tab_separation = 30
+theme_override_constants/icon_max_width = 80
+theme_override_styles/panel = SubResource("StyleBoxTexture_page")
+theme_override_styles/tabbar_background = SubResource("StyleBoxEmpty_bar")
+theme_override_styles/tab_unselected = SubResource("StyleBoxEmpty_tab")
+theme_override_styles/tab_hovered = SubResource("StyleBoxEmpty_tab")
+theme_override_styles/tab_selected = SubResource("StyleBoxEmpty_tab")
+theme_override_styles/tab_focus = SubResource("StyleBoxEmpty_bar")
+tab_alignment = 1
+current_tab = 1
+tabs_position = 1
+use_hidden_tabs_for_min_size = true
+tab_0/icon = ExtResource("4_edit")
+tab_1/icon = ExtResource("5_tiger")
+tab_2/icon = ExtResource("6_bell")
+tab_3/icon = ExtResource("7_ghost")
+
+[node name="EditPage" parent="Card/Tabs" unique_id=2045661714 instance=ExtResource("8_edit_page")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="FriendPage" parent="Card/Tabs" unique_id=1674508872 instance=ExtResource("9_friend_page")]
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="RequestPage" parent="Card/Tabs" unique_id=1771054187 instance=ExtResource("10_request_page")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="BlockedPage" parent="Card/Tabs" unique_id=288014490 instance=ExtResource("11_blocked_page")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 3
+
+[node name="BtnClose" type="Button" parent="Card" unique_id=1849099334]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+tooltip_text = "Close"
+focus_mode = 0
+theme = ExtResource("12_base")
+text = "X"

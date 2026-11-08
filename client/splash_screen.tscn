@@ -2,35 +2,49 @@
 
 [ext_resource type="Script" uid="uid://crd83syge7qgw" path="res://client/splash_screen.gd" id="1_6c2gy"]
 [ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="2_cs1pr"]
+[ext_resource type="Texture2D" uid="uid://drlbamphmm2ev" path="res://client/assets/backgrounds/splash-screen.png" id="3_a1e2x"]
+[ext_resource type="FontFile" uid="uid://bleq2efn5cto7" path="res://client/assets/fonts/Inter/static/Inter_28pt-Medium.ttf" id="4_pypgr"]
+[ext_resource type="Texture2D" uid="uid://2uanh5rafild" path="res://client/assets/buttons/btn-lg-white.png" id="5_jlk3i"]
+[ext_resource type="Texture2D" uid="uid://cbnq8nqp0hebn" path="res://client/assets/buttons/btn-lg-yellow.png" id="6_mprig"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6c2gy"]
 font = ExtResource("2_cs1pr")
-font_size = 88
-font_color = Color(1, 0.8980392, 0.2901961, 1)
+font_size = 100
+font_color = Color(0.9490196, 0.78039217, 0.36078432, 1)
+outline_size = 19
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 9
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6c2gy"]
-bg_color = Color(0.9411765, 0.9019608, 0.61960787, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-corner_detail = 14
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tj6xj"]
+texture = ExtResource("5_jlk3i")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cs1pr"]
-bg_color = Color(0.9411765, 0.9019608, 0.61960787, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mprig"]
+texture = ExtResource("5_jlk3i")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_uaicx"]
+texture = ExtResource("6_mprig")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_qhavw"]
+texture = ExtResource("5_jlk3i")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xhnv7"]
+texture = ExtResource("6_mprig")
 
 [node name="SplashScreen" type="Node2D" unique_id=615202200]
 script = ExtResource("1_6c2gy")
 auto_resume = false
 
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1811696600]
+position = Vector2(966, 547)
+scale = Vector2(1.0333333, 1.0333333)
+texture = ExtResource("3_a1e2x")
+metadata/_edit_lock_ = true
+
 [node name="LabelTitle" type="Label" parent="." unique_id=1234718361]
-offset_top = 168.0
-offset_right = 1152.0
-offset_bottom = 289.0
+offset_left = 126.0
+offset_top = 310.0
+offset_right = 880.0
+offset_bottom = 431.0
 theme_override_colors/font_color = Color(0.94140065, 0.8110374, 0.2642463, 1)
 theme_override_font_sizes/font_size = 88
 text = "Club Tiger"
@@ -45,10 +59,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 440.0
-offset_top = 320.0
-offset_right = 718.5
-offset_bottom = 427.0
+offset_left = 213.0
+offset_top = 503.0
+offset_right = 811.0
+offset_bottom = 746.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 16
@@ -56,14 +70,28 @@ alignment = 1
 
 [node name="BtnCreate" type="Button" parent="VBoxContainer" unique_id=391570104]
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_6c2gy")
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_pypgr")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxTexture_tj6xj")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_mprig")
+theme_override_styles/hover = SubResource("StyleBoxTexture_uaicx")
 text = "Create an account"
 
 [node name="BtnLogin" type="Button" parent="VBoxContainer" unique_id=1270162039]
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_cs1pr")
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_pypgr")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxTexture_qhavw")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_mprig")
+theme_override_styles/hover = SubResource("StyleBoxTexture_xhnv7")
 text = "Login"
 
 [connection signal="pressed" from="VBoxContainer/BtnCreate" to="." method="_on_btn_create_pressed"]

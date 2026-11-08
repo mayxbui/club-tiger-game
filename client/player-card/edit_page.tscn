@@ -1,0 +1,101 @@
+[gd_scene format=3 uid="uid://cnhosp8astsbi"]
+
+[ext_resource type="Script" uid="uid://cpap6mnfq7mpq" path="res://client/player-card/edit_page.gd" id="1_edit"]
+[ext_resource type="LabelSettings" uid="uid://bieh15rrbajlw" path="res://client/assets/label_settings.tres" id="2_title"]
+[ext_resource type="PackedScene" uid="uid://c8ipe7ahbtqpj" path="res://client/player/player_skeleton.tscn" id="3_skel"]
+[ext_resource type="PackedScene" uid="uid://csu2nqwhlsixs" path="res://client/player/character_customizer.tscn" id="4_custom"]
+[ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="5_ribeye"]
+[ext_resource type="Theme" uid="uid://1d8kr2ebnkqb" path="res://client/assets/base-theme.tres" id="6_base"]
+[ext_resource type="Texture2D" uid="uid://fwfua6ak8ly3" path="res://client/assets/buttons/btn-edit-white.png" id="7_pencil"]
+[ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="8_medium"]
+[ext_resource type="Theme" uid="uid://cry0ofe88mrqq" path="res://client/assets/sub-theme.tres" id="9_white"]
+[ext_resource type="Theme" uid="uid://dfungdn576rvd" path="res://client/assets/sub-theme-2.tres" id="10_yellow"]
+
+[node name="EditPage" type="MarginContainer" unique_id=1805160704]
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 30
+script = ExtResource("1_edit")
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1133811187]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelTitle" type="Label" parent="VBox" unique_id=637013707]
+layout_mode = 2
+text = "Edit Your Tiger"
+label_settings = ExtResource("2_title")
+horizontal_alignment = 1
+
+[node name="Content" type="HBoxContainer" parent="VBox" unique_id=1288743650]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="Preview" parent="VBox/Content" unique_id=841646092 instance=ExtResource("3_skel")]
+custom_minimum_size = Vector2(220, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+fit_to_size = true
+
+[node name="CharacterCustomizer" parent="VBox/Content" unique_id=903073110 instance=ExtResource("4_custom")]
+custom_minimum_size = Vector2(300, 420)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NameRow" type="HBoxContainer" parent="VBox" unique_id=6193747]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="InputUsername" type="LineEdit" parent="VBox/NameRow" unique_id=117464681]
+custom_minimum_size = Vector2(300, 56)
+layout_mode = 2
+theme = ExtResource("6_base")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_uneditable_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_ribeye")
+theme_override_font_sizes/font_size = 30
+text = "username"
+placeholder_text = "New username"
+alignment = 1
+max_length = 20
+editable = false
+flat = true
+
+[node name="BtnEditName" type="TextureButton" parent="VBox/NameRow" unique_id=1855493621]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Change username"
+texture_normal = ExtResource("7_pencil")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="LabelNotice" type="Label" parent="VBox" unique_id=282759320]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.35, 1)
+theme_override_fonts/font = ExtResource("8_medium")
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="VBox" unique_id=1932693609]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="BtnCancel" type="Button" parent="VBox/Buttons" unique_id=1642542422]
+custom_minimum_size = Vector2(200, 70)
+layout_mode = 2
+theme = ExtResource("9_white")
+text = "Cancel"
+
+[node name="BtnSave" type="Button" parent="VBox/Buttons" unique_id=256360557]
+custom_minimum_size = Vector2(200, 70)
+layout_mode = 2
+theme = ExtResource("10_yellow")
+text = "Save"

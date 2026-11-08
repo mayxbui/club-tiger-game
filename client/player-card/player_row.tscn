@@ -1,0 +1,41 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://client/player-card/player_row.gd" id="1_row"]
+[ext_resource type="PackedScene" uid="uid://c8ipe7ahbtqpj" path="res://client/player/player_skeleton.tscn" id="2_skel"]
+[ext_resource type="FontFile" uid="uid://dla6qicvsc5br" path="res://client/assets/fonts/Redaction_35/Redaction35-Bold.ttf" id="3_bold"]
+[ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="4_medium"]
+
+[node name="PlayerRow" type="HBoxContainer"]
+theme_override_constants/separation = 12
+script = ExtResource("1_row")
+
+[node name="Avatar" parent="." instance=ExtResource("2_skel")]
+custom_minimum_size = Vector2(60, 80)
+layout_mode = 2
+fit_to_size = true
+
+[node name="Info" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="LabelName" type="Label" parent="Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_bold")
+theme_override_font_sizes/font_size = 25
+text = "Player name"
+text_overrun_behavior = 3
+
+[node name="LabelStatus" type="Label" parent="Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.35, 1)
+theme_override_fonts/font = ExtResource("4_medium")
+theme_override_font_sizes/font_size = 18
+text = "Offline"
+
+[node name="Actions" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 8

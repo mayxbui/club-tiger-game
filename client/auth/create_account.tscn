@@ -3,121 +3,150 @@
 [ext_resource type="Script" uid="uid://ck5bp764xt4xi" path="res://client/auth/create_account.gd" id="1_create_account"]
 [ext_resource type="PackedScene" uid="uid://dhd56c0gjjps" path="res://client/player/player.tscn" id="2_cwpj5"]
 [ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="2_fjfd6"]
+[ext_resource type="Texture2D" uid="uid://bgx08q40r8jqb" path="res://client/assets/backgrounds/sign_up.png" id="2_iycys"]
 [ext_resource type="PackedScene" uid="uid://csu2nqwhlsixs" path="res://client/player/character_customizer.tscn" id="3_hxtys"]
+[ext_resource type="LabelSettings" uid="uid://bieh15rrbajlw" path="res://client/assets/label_settings.tres" id="3_lh2gn"]
+[ext_resource type="Texture2D" uid="uid://cq0wy76m2jq1t" path="res://client/assets/buttons/btn-sm-white.png" id="4_pwe3t"]
+[ext_resource type="Texture2D" uid="uid://duk1vt1cnm26t" path="res://client/assets/page-card/card-white.png" id="4_sslf2"]
+[ext_resource type="Texture2D" uid="uid://cue8nq8je772s" path="res://client/assets/buttons/btn-sm-yellow.png" id="5_yp56v"]
+[ext_resource type="Texture2D" uid="uid://d253r1ptsca2j" path="res://client/assets/input/user-input-white.png" id="6_pwe3t"]
+[ext_resource type="Texture2D" uid="uid://ium1m6lb1cmh" path="res://client/assets/buttons/btn-lg-black.png" id="10_hlaid"]
+[ext_resource type="FontFile" uid="uid://3trnlsdvfrph" path="res://client/assets/fonts/Inter/static/Inter_18pt-Medium.ttf" id="10_s26im"]
+[ext_resource type="Texture2D" uid="uid://cbnq8nqp0hebn" path="res://client/assets/buttons/btn-lg-yellow.png" id="11_s26im"]
+[ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="13_va36v"]
+[ext_resource type="FontFile" uid="uid://b8f25ur6e4wjy" path="res://client/assets/fonts/Inter/static/Inter_28pt-MediumItalic.ttf" id="14_va36v"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_boovr"]
-font = ExtResource("2_fjfd6")
-font_size = 37
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uaicx"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fjfd6"]
-bg_color = Color(1, 0.8352941, 0.32156864, 1)
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xhnv7"]
+texture = ExtResource("4_pwe3t")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.9411765, 0.9019608, 0.61960787, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.9490196, 0.8, 0.3019608, 1)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pwe3t"]
+texture = ExtResource("5_yp56v")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_field"]
-bg_color = Color(1, 1, 1, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.9490196, 0.8, 0.3019608, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_sslf2"]
+texture = ExtResource("10_hlaid")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
-bg_color = Color(0.9490196, 0.8, 0.3019608, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_172lf"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_iwtvl"]
+texture = ExtResource("6_pwe3t")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hlaid"]
+texture = ExtResource("6_pwe3t")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_s26im"]
+texture = ExtResource("6_pwe3t")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_yjky5"]
+texture = ExtResource("10_hlaid")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_d7vgm"]
+texture = ExtResource("11_s26im")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_va36v"]
+texture = ExtResource("11_s26im")
 
 [node name="CreateAccount" type="Node2D" unique_id=324003326]
 script = ExtResource("1_create_account")
 
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=771308047]
+position = Vector2(961, 543)
+scale = Vector2(1, 1.02476)
+texture = ExtResource("2_iycys")
+
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1886825673]
 
 [node name="OuterPanel" type="Panel" parent="CanvasLayer" unique_id=442653373]
-offset_right = 1152.0
-offset_bottom = 648.0
+offset_left = 69.0
+offset_top = 80.0
+offset_right = 1828.0
+offset_bottom = 1015.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_uaicx")
 
 [node name="LabelTitle" type="Label" parent="CanvasLayer/OuterPanel" unique_id=874482369]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 20.0
-offset_right = 1112.0
-offset_bottom = 70.0
+offset_left = 521.0
+offset_top = 27.0
+offset_right = 1198.0
+offset_bottom = 79.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 32
 text = "Create Your Character"
-label_settings = SubResource("LabelSettings_boovr")
+label_settings = ExtResource("3_lh2gn")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BtnBack" type="Button" parent="CanvasLayer/OuterPanel" unique_id=60322183]
+[node name="BtnBack" type="Button" parent="CanvasLayer/OuterPanel" unique_id=1228789828]
 layout_mode = 0
 offset_left = 73.0
 offset_top = 25.0
-offset_right = 143.0
-offset_bottom = 60.0
+offset_right = 221.0
+offset_bottom = 99.0
+tooltip_text = "Back"
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_fjfd6")
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.98988444, 0.8445974, 0.23802885, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_fjfd6")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxTexture_xhnv7")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_pwe3t")
+theme_override_styles/hover = SubResource("StyleBoxTexture_sslf2")
 text = "Back"
 
 [node name="CharacterPanel" type="Panel" parent="CanvasLayer/OuterPanel" unique_id=157415224]
 layout_mode = 0
-offset_left = 60.0
-offset_top = 100.0
-offset_right = 620.0
-offset_bottom = 600.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+offset_left = 199.0
+offset_top = 178.0
+offset_right = 1080.0
+offset_bottom = 888.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_172lf")
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/OuterPanel/CharacterPanel" unique_id=1115892499]
+position = Vector2(277.99997, 299.99997)
+scale = Vector2(0.6394422, 0.8109902)
+texture = ExtResource("4_sslf2")
 
 [node name="CharacterCustomizer" parent="CanvasLayer/OuterPanel/CharacterPanel" unique_id=1238502484 instance=ExtResource("3_hxtys")]
 layout_mode = 1
-offset_left = 9.0
-offset_top = 63.0
-offset_right = -270.0
-offset_bottom = -20.0
+offset_left = 459.0
+offset_top = 19.0
+offset_right = 28.0
+offset_bottom = -64.0
+scale = Vector2(0.9973775, 1)
 
 [node name="InputUsername" type="LineEdit" parent="CanvasLayer/OuterPanel/CharacterPanel" unique_id=1036643844]
 layout_mode = 0
-offset_left = 295.0
-offset_top = 396.0
-offset_right = 495.0
-offset_bottom = 436.0
+offset_left = 98.0
+offset_top = 600.0
+offset_right = 451.0
+offset_bottom = 673.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_placeholder_color = Color(0.15693116, 0.15693155, 0.15693125, 0.6)
-theme_override_styles/normal = SubResource("StyleBoxFlat_field")
-placeholder_text = "Usesrname"
+theme_override_fonts/font = ExtResource("10_s26im")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxTexture_iwtvl")
+placeholder_text = "Username"
 alignment = 1
 max_length = 20
 backspace_deletes_composite_character_enabled = true
 clear_button_enabled = true
 
 [node name="Player" parent="CanvasLayer/OuterPanel/CharacterPanel" unique_id=1571350742 instance=ExtResource("2_cwpj5")]
-position = Vector2(379, 211)
-scale = Vector2(0.7, 0.7)
+position = Vector2(276, 267.99997)
 
 [node name="InputEmail" type="LineEdit" parent="CanvasLayer/OuterPanel" unique_id=1315285249]
 layout_mode = 0
-offset_left = 660.0
-offset_top = 180.0
-offset_right = 1080.0
-offset_bottom = 230.0
+offset_left = 1165.0
+offset_top = 294.0
+offset_right = 1585.0
+offset_bottom = 377.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.6)
-theme_override_styles/normal = SubResource("StyleBoxFlat_field")
+theme_override_fonts/font = ExtResource("10_s26im")
+theme_override_font_sizes/font_size = 23
+theme_override_styles/normal = SubResource("StyleBoxTexture_hlaid")
 placeholder_text = "Enter your email"
 alignment = 1
 backspace_deletes_composite_character_enabled = true
@@ -125,13 +154,15 @@ clear_button_enabled = true
 
 [node name="InputPassword" type="LineEdit" parent="CanvasLayer/OuterPanel" unique_id=634910586]
 layout_mode = 0
-offset_left = 660.0
-offset_top = 250.0
-offset_right = 1080.0
-offset_bottom = 300.0
+offset_left = 1165.0
+offset_top = 384.0
+offset_right = 1585.0
+offset_bottom = 458.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_placeholder_color = Color(0.0739884, 0.073988624, 0.073988445, 0.6)
-theme_override_styles/normal = SubResource("StyleBoxFlat_field")
+theme_override_fonts/font = ExtResource("10_s26im")
+theme_override_font_sizes/font_size = 23
+theme_override_styles/normal = SubResource("StyleBoxTexture_s26im")
 placeholder_text = "Enter your password"
 alignment = 1
 backspace_deletes_composite_character_enabled = true
@@ -140,34 +171,47 @@ secret = true
 
 [node name="BtnCreate" type="Button" parent="CanvasLayer/OuterPanel" unique_id=800347633]
 layout_mode = 0
-offset_left = 660.0
-offset_top = 340.0
-offset_right = 1080.0
-offset_bottom = 390.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+offset_left = 1176.0
+offset_top = 473.0
+offset_right = 1596.0
+offset_bottom = 542.3719
+scale = Vector2(1, 1.009054)
+theme_override_colors/font_color = Color(0.99567145, 0.8987797, 0.5378617, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_fjfd6")
+theme_override_font_sizes/font_size = 23
+theme_override_styles/normal = SubResource("StyleBoxTexture_yjky5")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_d7vgm")
+theme_override_styles/hover = SubResource("StyleBoxTexture_va36v")
 text = "Create an account"
-
-[node name="LabelDebug" type="Label" parent="CanvasLayer/OuterPanel" unique_id=1156320726]
-layout_mode = 0
-offset_left = 60.0
-offset_top = 610.0
-offset_right = 1080.0
-offset_bottom = 648.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-horizontal_alignment = 1
-autowrap_mode = 2
 
 [node name="BtnLogin" type="Button" parent="CanvasLayer/OuterPanel" unique_id=870284456]
 layout_mode = 0
-offset_left = 707.0
-offset_top = 411.0
-offset_right = 1040.0
-offset_bottom = 451.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+offset_left = 1217.0
+offset_top = 564.0
+offset_right = 1550.0
+offset_bottom = 604.0
+theme_override_colors/font_color = Color(0.24322435, 0.24322438, 0.24322438, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("13_va36v")
+theme_override_font_sizes/font_size = 20
 text = "Have an account? Login"
 flat = true
+
+[node name="LabelDebug" type="Label" parent="CanvasLayer/OuterPanel" unique_id=1156320726]
+layout_mode = 0
+offset_left = 1124.0
+offset_top = 626.0
+offset_right = 1608.0
+offset_bottom = 664.0
+theme_override_colors/font_color = Color(0.8657458, 0.16693199, 0.09954848, 1)
+theme_override_fonts/font = ExtResource("14_va36v")
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="TimerDebug" type="Timer" parent="." unique_id=533603041]
 wait_time = 2.8

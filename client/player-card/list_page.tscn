@@ -1,0 +1,103 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://client/player-card/list_page.gd" id="1_list"]
+[ext_resource type="LabelSettings" uid="uid://bieh15rrbajlw" path="res://client/assets/label_settings.tres" id="2_title"]
+[ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="3_medium"]
+[ext_resource type="Theme" uid="uid://1d8kr2ebnkqb" path="res://client/assets/base-theme.tres" id="4_base"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_popup"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.9098039, 0.65882355, 0.2901961, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[node name="ListPage" type="MarginContainer"]
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 30
+script = ExtResource("1_list")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LabelTitle" type="Label" parent="VBox"]
+layout_mode = 2
+text = "Fellow Tigers"
+label_settings = ExtResource("2_title")
+horizontal_alignment = 1
+
+[node name="LabelCount" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.35, 1)
+theme_override_fonts/font = ExtResource("3_medium")
+theme_override_font_sizes/font_size = 20
+text = "0 friends"
+horizontal_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="List" type="VBoxContainer" parent="VBox/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="LabelEmpty" type="Label" parent="VBox"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.35, 1)
+theme_override_fonts/font = ExtResource("3_medium")
+theme_override_font_sizes/font_size = 20
+text = "No friends yet."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Suggestions" type="PanelContainer" parent="VBox"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_popup")
+
+[node name="SuggestionList" type="VBoxContainer" parent="VBox/Suggestions"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LabelNotice" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.35, 1)
+theme_override_fonts/font = ExtResource("3_medium")
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="SearchRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SearchBar" type="LineEdit" parent="VBox/SearchRow"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("4_base")
+placeholder_text = "Search by username"
+max_length = 20
+
+[node name="BtnSearch" type="TextureButton" parent="VBox/SearchRow"]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+tooltip_text = "Search"
+ignore_texture_size = true
+stretch_mode = 5

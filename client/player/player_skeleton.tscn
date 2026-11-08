@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://c8ipe7ahbtqpj"]
+
+[ext_resource type="Script" path="res://client/player/player_skeleton.gd" id="1_skel"]
+[ext_resource type="Texture2D" uid="uid://q86c55hgybo4" path="res://client/assets/skin/shade0.png" id="2_skin"]
+[ext_resource type="Texture2D" uid="uid://bq56ud23eulu4" path="res://client/assets/hair/hair1.png" id="3_hair"]
+[ext_resource type="Texture2D" uid="uid://ce45u83ieeoiu" path="res://client/assets/eyes/eye1.png" id="4_eye"]
+
+[node name="PlayerSkeleton" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("1_skel")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Skin" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_skin")
+hframes = 2
+
+[node name="Hair" type="Sprite2D" parent="Body"]
+position = Vector2(9, -102)
+texture = ExtResource("3_hair")
+
+[node name="Eye" type="Sprite2D" parent="Body"]
+position = Vector2(21, -97)
+texture = ExtResource("4_eye")

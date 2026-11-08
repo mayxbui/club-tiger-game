@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ckxynjwdid45p"
-path="res://.godot/imported/main-map.png-d66f300aa42711fd1b040a924ad5a6cb.ctex"
+uid="uid://gbxat51wda6q"
+path="res://.godot/imported/gym.png-feb4663f0e42a4aa48c40d96774353b4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://client/assets/main-map.png"
-dest_files=["res://.godot/imported/main-map.png-d66f300aa42711fd1b040a924ad5a6cb.ctex"]
+source_file="res://client/assets/backgrounds/gym.png"
+dest_files=["res://.godot/imported/gym.png-feb4663f0e42a4aa48c40d96774353b4.ctex"]
 
 [params]
 

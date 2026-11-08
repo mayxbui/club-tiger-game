@@ -1,72 +1,73 @@
 [gd_scene format=3 uid="uid://i6k0crfohrc1"]
 
-[ext_resource type="Texture2D" uid="uid://ckxynjwdid45p" path="res://client/assets/main-map.png" id="1_su6gu"]
 [ext_resource type="Script" uid="uid://c1ymvras8nhic" path="res://client/map/world_map.gd" id="1_vmchv"]
+[ext_resource type="Texture2D" uid="uid://cnc7ldvvbuhoo" path="res://client/assets/backgrounds/east-college.png" id="2_msnty"]
 [ext_resource type="PackedScene" uid="uid://dhd56c0gjjps" path="res://client/player/player.tscn" id="2_qgng5"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vmchv"]
-bg_color = Color(1, 0.8352941, 0.32156864, 1)
+[ext_resource type="Theme" uid="uid://cry0ofe88mrqq" path="res://client/assets/sub-theme.tres" id="4_0r5pw"]
+[ext_resource type="Theme" uid="uid://1d8kr2ebnkqb" path="res://client/assets/base-theme.tres" id="4_msnty"]
+[ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="5_0r5pw"]
+[ext_resource type="Theme" uid="uid://dfungdn576rvd" path="res://client/assets/sub-theme-2.tres" id="7_jb7xo"]
+[ext_resource type="PackedScene" uid="uid://7gulqypbu8px" path="res://client/player-card/player_card.tscn" id="8_uf8tm"]
+[ext_resource type="Texture2D" uid="uid://bj5semtccjge3" path="res://client/assets/buttons/btn-tiger.png" id="9_tiger"]
+[ext_resource type="Texture2D" uid="uid://bswk30oesnss6" path="res://client/assets/buttons/btn-tiger-clicked.png" id="10_tiger_clicked"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0r5pw"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w48n2"]
-bg_color = Color(1, 0.8352941, 0.32156864, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-
 [node name="WorldMap" type="Node2D" unique_id=38426788]
+position = Vector2(207, 223)
 script = ExtResource("1_vmchv")
 
 [node name="Map" type="Sprite2D" parent="." unique_id=1215983187]
-position = Vector2(573, 328)
-scale = Vector2(0.84374994, 0.84375)
-texture = ExtResource("1_su6gu")
+position = Vector2(751.941, 321.7168)
+scale = Vector2(1.0023762, 1.0023762)
+texture = ExtResource("2_msnty")
 metadata/_edit_group_ = true
-
-[node name="Map2" type="Sprite2D" parent="." unique_id=489857421]
-position = Vector2(-291.00006, 329)
-scale = Vector2(0.8463541, 0.8463541)
-texture = ExtResource("1_su6gu")
-metadata/_edit_group_ = true
-
-[node name="Map3" type="Sprite2D" parent="." unique_id=1581610486]
-position = Vector2(1433.3334, 328.5)
-scale = Vector2(0.83984375, 0.83984375)
-texture = ExtResource("1_su6gu")
-metadata/_edit_group_ = true
+metadata/_edit_lock_ = true
 
 [node name="Players" type="Node2D" parent="." unique_id=1332202207]
 y_sort_enabled = true
 
 [node name="Player" parent="Players" unique_id=1159748652 instance=ExtResource("2_qgng5")]
-position = Vector2(676, 414.00003)
+position = Vector2(1671, 686)
 scale = Vector2(0.345, 0.345)
 
 [node name="Walkable" type="Polygon2D" parent="." unique_id=1728480272]
 visible = false
-position = Vector2(36.868492, 212.16159)
-scale = Vector2(0.9342561, 0.58079267)
-polygon = PackedVector2Array(-2, -2, -1, 654, 572.10284, 652.5102, 1153, 651, 1154, -1)
+position = Vector2(-173.7699, -161.97867)
+scale = Vector2(1.6150519, 1.5106708)
+polygon = PackedVector2Array(-2, -2, -1, 654, 572.10284, 652.5102, 1153, 651, 1154, -1, 577.7418, -1.4985352)
 uv = PackedVector2Array(-2, -2, -1, 654, 1153, 651, 1150, 2)
 
 [node name="BtnLogout" type="Button" parent="." unique_id=738351831]
-offset_left = 1041.0
-offset_top = 30.0
-offset_right = 1111.0
-offset_bottom = 64.999985
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_vmchv")
+offset_left = -134.0
+offset_top = -173.0
+offset_right = 8.0
+offset_bottom = -122.0
+theme = ExtResource("4_0r5pw")
 text = "Logout"
+
+[node name="BtnPlayerCard" type="TextureButton" parent="." unique_id=443131648]
+offset_left = 1547.0
+offset_top = -169.0
+offset_right = 1643.0
+offset_bottom = -73.0
+tooltip_text = "Player card"
+focus_mode = 0
+texture_normal = ExtResource("9_tiger")
+texture_pressed = ExtResource("10_tiger_clicked")
+texture_hover = ExtResource("10_tiger_clicked")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="ChatUI" type="CanvasLayer" parent="." unique_id=1773840429]
 
 [node name="ChatPanel" type="PanelContainer" parent="ChatUI" unique_id=1810515842]
-offset_left = 321.0
-offset_top = 560.0
-offset_right = 825.0
-offset_bottom = 632.0
+offset_left = 640.0
+offset_top = 1001.0
+offset_right = 1385.0
+offset_bottom = 1080.0
+pivot_offset = Vector2(1437, 53)
 theme_override_styles/panel = SubResource("StyleBoxFlat_0r5pw")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ChatUI/ChatPanel" unique_id=1057084154]
@@ -84,23 +85,32 @@ editor_description = "Maximum 160 characters
 custom_minimum_size = Vector2(-1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+theme = ExtResource("4_msnty")
 placeholder_text = "Chat"
 keep_editing_on_text_submit = true
 backspace_deletes_composite_character_enabled = true
 
 [node name="ChatLimit" type="Label" parent="ChatUI/ChatPanel/VBoxContainer/HBoxContainer" unique_id=1694715929]
 layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8784314)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_0r5pw")
+theme_override_font_sizes/font_size = 22
 text = "160"
 
 [node name="BtnSend" type="Button" parent="ChatUI/ChatPanel/VBoxContainer/HBoxContainer" unique_id=313792787]
-custom_maximum_size = Vector2(60, -1)
+custom_maximum_size = Vector2(110, -1)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_w48n2")
+theme = ExtResource("7_jb7xo")
 text = "Send"
 
 [node name="ChatNotice" type="Label" parent="ChatUI/ChatPanel/VBoxContainer" unique_id=376243975]
 layout_mode = 2
+
+[node name="PlayerCard" parent="." unique_id=1661173485 instance=ExtResource("8_uf8tm")]
+offset = Vector2(-30, -40)
+transform = Transform2D(1, 0, 0, 1, -30, -40)
+card_scale = 0.65
 
 [connection signal="pressed" from="BtnLogout" to="." method="_on_btn_logout_pressed"]

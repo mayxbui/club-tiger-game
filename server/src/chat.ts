@@ -1,27 +1,25 @@
-// Chat server (#19, part of #7 - checkpoint 2): checks a chat message, filters it, and sends it to everyone
-// on the map. The client side is #18 (client/map/world_map.gd).
+// Chat server: checks a chat message, filters it, and sends it to everyone
+// on the map.
 //
 // Messages (must match client/map/world_map.gd):
 //   client -> server   chat           {text}
 //   server -> everyone chat_message   {userId, username, text}     also sent back to the sender, so everyone
 //                                                                   (including them) sees the same text
 //   server -> sender   chat_rejected  {reason}                     only the sender sees why it wasn't sent
-//
+
 import { WebSocket } from "ws";
 import { findBlockedPhrase, containsLink } from "./chatFilter.js";
 import { getWorldUsername, broadcastToWorld } from "./world.js";
 
 const MAX_CHAT_LENGTH = 48;   
 const MAX_MESSAGES = 3;        
-const RATE_CHAT = 3000;        
+const RATE_CHAT = 3 * 1000;        
 const recentMessages = new Map<number, number[]>();   // userId -> times of their recent messages
 
-// Sends one JSON message to one socket (its own copy, because this file must not import from index.ts).
 function send(socket: WebSocket, message: unknown ){
     socket.send(JSON.stringify(message));
 }
 
-// Tells only the sender why their message wasn't sent.
 function reject(socket: WebSocket, reason: string){
     send(socket,{
         type: "chat_rejected",
@@ -29,7 +27,7 @@ function reject(socket: WebSocket, reason: string){
     });
 }
 
-// Cleans the message (never trust the client), checks length, rate limit and blocked words, then broadcasts it
+// Cleans the message, checks length, rate limit and blocked words, then broadcasts it
 export function handleChat(socket: WebSocket, userId: number, chatMsg: unknown): void{
     const username = getWorldUsername(socket,userId);
     if(!username) return;
@@ -55,7 +53,6 @@ export function handleChat(socket: WebSocket, userId: number, chatMsg: unknown):
     recentMessages.set(userId, times);
 
     // Links are mostly scams, phishing and porn spam, and players can't check them before clicking (rule R4).
-    // It goes after the rate limit, so spamming links still counts.
     if (containsLink(text)){
         console.log(`[chat] link blocked from user ${userId}`);
         reject(socket, "Links aren't allowed in chat.");
