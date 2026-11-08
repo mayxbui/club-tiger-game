@@ -24,6 +24,16 @@ shape = SubResource("RectangleShape2D_ee1sm")
 
 [node name="Skeleton" parent="." unique_id=749264483 instance=ExtResource("2_skel")]
 
+[node name="ClickArea" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -120.0
+offset_top = -225.0
+offset_right = 120.0
+offset_bottom = 215.0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+
 [node name="LabelUsername" type="Label" parent="." unique_id=1046048194]
 offset_left = -83.0
 offset_top = 220.0
@@ -48,3 +58,5 @@ size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 10
 alignment = 2
+
+[connection signal="gui_input" from="ClickArea" to="." method="_on_click_area_gui_input"]

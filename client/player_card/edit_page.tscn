@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cnhosp8astsbi"]
 
-[ext_resource type="Script" uid="uid://cpap6mnfq7mpq" path="res://client/player-card/edit_page.gd" id="1_edit"]
+[ext_resource type="Script" uid="uid://cpap6mnfq7mpq" path="res://client/player_card/edit_page.gd" id="1_edit"]
 [ext_resource type="LabelSettings" uid="uid://bieh15rrbajlw" path="res://client/assets/label_settings.tres" id="2_title"]
 [ext_resource type="PackedScene" uid="uid://c8ipe7ahbtqpj" path="res://client/player/player_skeleton.tscn" id="3_skel"]
 [ext_resource type="PackedScene" uid="uid://csu2nqwhlsixs" path="res://client/player/character_customizer.tscn" id="4_custom"]
@@ -99,3 +99,8 @@ custom_minimum_size = Vector2(200, 70)
 layout_mode = 2
 theme = ExtResource("10_yellow")
 text = "Save"
+
+[connection signal="text_submitted" from="VBox/NameRow/InputUsername" to="." method="_on_input_username_text_submitted"]
+[connection signal="pressed" from="VBox/NameRow/BtnEditName" to="." method="_on_btn_edit_name_pressed"]
+[connection signal="pressed" from="VBox/Buttons/BtnCancel" to="." method="_on_btn_cancel_pressed"]
+[connection signal="pressed" from="VBox/Buttons/BtnSave" to="." method="_on_btn_save_pressed"]

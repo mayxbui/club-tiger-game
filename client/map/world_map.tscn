@@ -7,7 +7,8 @@
 [ext_resource type="Theme" uid="uid://1d8kr2ebnkqb" path="res://client/assets/base-theme.tres" id="4_msnty"]
 [ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="5_0r5pw"]
 [ext_resource type="Theme" uid="uid://dfungdn576rvd" path="res://client/assets/sub-theme-2.tres" id="7_jb7xo"]
-[ext_resource type="PackedScene" uid="uid://7gulqypbu8px" path="res://client/player-card/player_card.tscn" id="8_uf8tm"]
+[ext_resource type="PackedScene" uid="uid://7gulqypbu8px" path="res://client/player_card/player_card.tscn" id="8_uf8tm"]
+[ext_resource type="PackedScene" path="res://client/other_player_card/other_player_card.tscn" id="13_other_card"]
 [ext_resource type="Texture2D" uid="uid://bj5semtccjge3" path="res://client/assets/buttons/btn-tiger.png" id="9_tiger"]
 [ext_resource type="Texture2D" uid="uid://bswk30oesnss6" path="res://client/assets/buttons/btn-tiger-clicked.png" id="10_tiger_clicked"]
 
@@ -42,8 +43,8 @@ uv = PackedVector2Array(-2, -2, -1, 654, 1153, 651, 1150, 2)
 [node name="BtnLogout" type="Button" parent="." unique_id=738351831]
 offset_left = -134.0
 offset_top = -173.0
-offset_right = 8.0
-offset_bottom = -122.0
+offset_right = 26.0
+offset_bottom = -111.0
 theme = ExtResource("4_0r5pw")
 text = "Logout"
 
@@ -109,8 +110,9 @@ text = "Send"
 layout_mode = 2
 
 [node name="PlayerCard" parent="." unique_id=1661173485 instance=ExtResource("8_uf8tm")]
-offset = Vector2(-30, -40)
-transform = Transform2D(1, 0, 0, 1, -30, -40)
-card_scale = 0.65
+offset = Vector2(-30, -50)
+transform = Transform2D(1, 0, 0, 1, -30, -50)
+
+[node name="OtherPlayerCard" parent="." instance=ExtResource("13_other_card")]
 
 [connection signal="pressed" from="BtnLogout" to="." method="_on_btn_logout_pressed"]

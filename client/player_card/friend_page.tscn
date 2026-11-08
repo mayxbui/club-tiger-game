@@ -1,5 +1,5 @@
 [gd_scene format=3 uid="uid://1i1mffe62i4p"]
 
-[ext_resource type="PackedScene" path="res://client/player-card/list_page.tscn" id="1_base"]
+[ext_resource type="PackedScene" path="res://client/player_card/list_page.tscn" id="1_base"]
 
 [node name="FriendPage" unique_id=1188231869 instance=ExtResource("1_base")]

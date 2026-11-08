@@ -1,6 +1,6 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://client/player-card/player_row.gd" id="1_row"]
+[ext_resource type="Script" path="res://client/player_card/player_row.gd" id="1_row"]
 [ext_resource type="PackedScene" uid="uid://c8ipe7ahbtqpj" path="res://client/player/player_skeleton.tscn" id="2_skel"]
 [ext_resource type="FontFile" uid="uid://dla6qicvsc5br" path="res://client/assets/fonts/Redaction_35/Redaction35-Bold.ttf" id="3_bold"]
 [ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="4_medium"]

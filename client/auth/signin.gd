@@ -38,14 +38,14 @@ func _on_message_received(data: Dictionary) -> void:
 			if file:
 				file.store_string(Session.token)
 			else:
-				print("Failed to save session token. Error: ", FileAccess.get_open_error())
+				print("Failed to save session token. ", FileAccess.get_open_error())
 		elif FileAccess.file_exists(SESSION_FILE):
 			# "Remember me" is off, so forget any session saved by an earlier login.
 			DirAccess.remove_absolute(SESSION_FILE)
 
 		get_tree().change_scene_to_file("res://client/map/world_map.tscn")
 	else:
-		show_message("Error: " + str(data.get("error")) + "\n")
+		show_message(str(data.get("error")) + "\n")
 		$VBoxContainer/InputPassword.clear()
 
 # Opens the create-account screen.
@@ -80,3 +80,7 @@ func _on_btn_login_pressed() -> void:
 # Opens the reset-password screen.
 func _on_btn_forgot_pressed() -> void:
 	get_tree().change_scene_to_file("res://client/auth/reset_password.tscn")
+
+
+func _on_check_show_password_toggled(toggled_on: bool) -> void:
+	$VBoxContainer/InputPassword.secret = not toggled_on

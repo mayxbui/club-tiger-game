@@ -10,7 +10,6 @@ enum Step { EMAIL, CODE, PASSWORD, DONE }
 var step := Step.EMAIL
 var email := ""
 var reset_token := ""
-# 6-digit boxes in CodeHBox (Digit1..Digit6)
 var digit_boxes: Array[LineEdit] = []
 var email_check := RegEx.new()
 
@@ -30,12 +29,14 @@ func _ready() -> void:
 		digit_boxes[i].text_changed.connect(_on_digit_changed.bind(i))
 		digit_boxes[i].gui_input.connect(_on_digit_gui_input.bind(i))
 		digit_boxes[i].text_submitted.connect(func(_text): _on_btn_submit_pressed())
-	# Pressing Enter in any text field works like clicking Submit.
+	# Pressing Enter on top of clicking Submit.
 	$EmailVBoxContainer/InputEmail.text_submitted.connect(func(_text): _on_btn_submit_pressed())
 	$PassVBoxContainer/InputNewPassword.text_submitted.connect(func(_text): $PassVBoxContainer/InputConfirm.grab_focus())
 	$PassVBoxContainer/InputConfirm.text_submitted.connect(func(_text): _on_btn_submit_pressed())
-
 	_show_step(Step.EMAIL)
+
+# Shows both password boxes while CheckShowPassword is checked and hides them when unchecked, so the player can
+# check what they typed before submitting (fewer "Passwords don't match" errors).
 
 # Shows only the controls for this step, sets the instructions in LabelMsg, and focuses the first field.
 func _show_step(new_step: Step) -> void:
@@ -44,7 +45,6 @@ func _show_step(new_step: Step) -> void:
 	$CodeHBox.visible = step == Step.CODE
 	$PassVBoxContainer.visible = step == Step.PASSWORD
 	$LabelMsg2.visible = step == Step.DONE
-	# BtnSubmit and BtnBack sit in the same spot, so only one is shown at a time.
 	$BtnSubmit.visible = step != Step.DONE
 	$BtnSubmit.disabled = false
 	$BtnBack.visible = step == Step.DONE
@@ -54,12 +54,14 @@ func _show_step(new_step: Step) -> void:
 		Step.EMAIL:
 			$EmailVBoxContainer/InputEmail.grab_focus()
 		Step.CODE:
-			$LabelMsg.text = "If this email has an account, we sent it a 6-digit code. It expires in 15 minutes."
+			$LabelMsg.text = "Check your inbox for a 6-digit code."
 			_clear_code()
 		Step.PASSWORD:
-			$LabelMsg.text = "Choose a new password."
 			$PassVBoxContainer/InputNewPassword.clear()
 			$PassVBoxContainer/InputConfirm.clear()
+			# Start hidden again if the player comes back here (e.g. after an expired reset token).
+			# Setting button_pressed fires `toggled`, which re-hides both boxes.
+			$PassVBoxContainer/CheckShowPassword.button_pressed = false
 			$PassVBoxContainer/InputNewPassword.grab_focus()
 
 # Runs the current step's check and sends it to the server
@@ -206,3 +208,8 @@ func _clear_code() -> void:
 # Goes back to the sign-in screen.
 func _on_btn_back_pressed() -> void:
 	get_tree().change_scene_to_file("res://client/auth/signin.tscn")
+
+
+func _on_check_show_password_toggled(toggled_on: bool) -> void:
+	$PassVBoxContainer/InputNewPassword.secret = not toggled_on
+	$PassVBoxContainer/InputConfirm.secret = not toggled_on

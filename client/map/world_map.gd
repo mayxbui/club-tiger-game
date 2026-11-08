@@ -25,6 +25,7 @@ var notice_tween: Tween
 @onready var chat_input := $ChatUI/ChatPanel/VBoxContainer/HBoxContainer/ChatInput
 @onready var chat_notice := $ChatUI/ChatPanel/VBoxContainer/ChatNotice
 @onready var player_card: PlayerCard = $PlayerCard
+@onready var other_player_card: OtherPlayerCard = $OtherPlayerCard
 # Test chat on client. Set to false to test on server. 
 const OFFLINE_CHAT_TEST := false
 
@@ -34,7 +35,7 @@ const OFFLINE_CHAT_TEST := false
 #            {"type": "chat_rejected", "reason"}                      -> red notice, only you see it
 
 # Server side (world.ts): player_updated {userId, username, character} -> redraw that player after a profile edit.
-# Friends and profile messages are handled by the player card (client/player-card/player_card.gd).
+# Friends and profile messages are handled by the player card (client/player_card/player_card.gd).
 
 # Spawns the local player at a random point, draws their saved character and username, and joins the shared world.
 func _ready() -> void:
@@ -225,6 +226,9 @@ func _add_remote_player(info: Dictionary) -> void:
 	var target := Vector2(info.get("toX", info.get("x", 0.0)), info.get("toY", info.get("y", 0.0)))
 	if target != player.global_position:
 		player.move_to(target)
+	# Clicking them opens the other-player card. Remote players are made at runtime, so this is connected in code.
+	player.set_clickable(true)
+	player.clicked.connect(_on_remote_player_clicked.bind(user_id))
 	remote_players[user_id] = player
 
 # Removes another player's character (left, disconnected or logged out).
@@ -233,6 +237,13 @@ func _remove_remote_player(user_id: int) -> void:
 	if player != null:
 		player.queue_free()
 		remote_players.erase(user_id)
+	# Their card can't act on someone who left (or was just blocked), so close it.
+	if other_player_card.shown_user_id() == user_id:
+		other_player_card.close()
+
+# Opens the other-player card for the player that was clicked (connected in _add_remote_player).
+func _on_remote_player_clicked(user_id: int) -> void:
+	other_player_card.open_for(user_id)
 
 # Removes every other player's character, before world_state redraws the list.
 func _clear_remote_players() -> void:

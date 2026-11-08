@@ -1,9 +1,9 @@
 // Profile edits (#8 player card, edit page): change your username and/or look. The client side is
-// client/player-card/edit_page.gd.
+// client/player_card/edit_page.gd.
 //
 // Everything here is PRIVATE: This file must never import from index.ts
 //
-// Messages (must match client/player-card/edit_page.gd):
+// Messages (must match client/player_card/edit_page.gd):
 //   client -> server   update_profile          {username?, character?: {skin, hair, eyes}}   only the fields that changed
 //   server -> sender   update_profile_result   {success, error?, username, character}
 //   server -> others   player_updated          {userId, username, character}   (sent by world.ts, if on the map)

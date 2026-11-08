@@ -6,7 +6,7 @@ import { pool } from "./db.js";
 import { joinWorld, movePlayer, leaveWorld } from "./world.js";
 import { handleChat } from "./chat.js";
 import { getFriendsList, respondToRequest, sendFriendRequest, unfriend, starFriend, blockUser, unblockUser,
-    searchUsers, blockedWith } from "./friends.js";
+    searchUsers, blockedWith, getPlayerInfo } from "./friends.js";
 import { updateProfile } from "./profile.js";
 
 // Initialize the WebSocket server
@@ -297,6 +297,14 @@ wsServer.on("connection", (socket) => {
                     const userId = socketUsers.get(socket);
                     if (!userId) { send(socket, { type: "error", error: "Please sign in." }); break; }
                     await searchUsers(socket, userId, message.query);
+                    break;
+                }
+
+                // Looks up one player (name, look, relation) for the other-player card
+                case "player_info": {
+                    const userId = socketUsers.get(socket);
+                    if (!userId) { send(socket, { type: "error", error: "Please sign in." }); break; }
+                    await getPlayerInfo(socket, userId, message.userId);
                     break;
                 }
 

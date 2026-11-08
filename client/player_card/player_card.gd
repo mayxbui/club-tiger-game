@@ -4,6 +4,7 @@ extends CanvasLayer
 # Player card: opens from the tiger button left of the chat, on the right side of the map. Four tabs: Edit (your
 # look and username), Friends, Requests and Blocked. The card owns the friends networking: it sends every request
 # and handles every reply and push from server/src/friends.ts and profile.ts, then tells the pages what to show.
+# The X button is connected in player_card.tscn; tab, page and server signals are connected in _ready.
 # Message: see the headers of server/src/friends.ts and server/src/profile.ts.
 
 # Save on the Edit page worked (Session is already updated): world_map.gd redraws the local player.
@@ -40,7 +41,10 @@ var _hovered_tab := -1
 @onready var request_page: ListPage = $Card/Tabs/RequestPage
 @onready var blocked_page: ListPage = $Card/Tabs/BlockedPage
 @onready var list_pages: Array[ListPage] = [friend_page, request_page, blocked_page]
+@onready var confirm_dialog: ConfirmDialog = $ConfirmDialog
 
+
+# --- Setup ---
 
 # Hides the card, sets up the icon tabs, connects the pages and listens to the server.
 func _ready() -> void:
@@ -63,36 +67,7 @@ func _ready() -> void:
 	for page in list_pages:
 		page.row_action.connect(_on_row_action.bind(page))
 		page.search_requested.connect(func(query): Network.send({"type": "search_users", "query": query}))
-	$Card/BtnClose.pressed.connect(close)
 	Network.message_received.connect(_on_message_received)
-
-
-# Opens the card if it's closed, closes it if it's open (world_map.gd calls this when you click your character).
-func toggle() -> void:
-	if visible:
-		close()
-	else:
-		open()
-
-
-# Shows the card with your saved profile on the Edit page and a fresh friends list.
-func open() -> void:
-	visible = true
-	edit_page.reset()
-	refresh()
-
-
-# Hides the card and closes any search pop-ups.
-func close() -> void:
-	visible = false
-	for page in list_pages:
-		page.clear_search()
-
-
-# Asks the server for the whole friends list again. The server is the one source of truth, so after any change the
-# card reloads the list instead of patching it.
-func refresh() -> void:
-	Network.send({"type": "friends_list"})
 
 
 # Escape closes the card.
@@ -102,19 +77,42 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
-# Scales the card by card_scale around the middle of its right edge, so it shrinks toward the right side of the
-# screen. Runs again if the card's size changes.
-func _apply_card_scale() -> void:
-	card.pivot_offset = Vector2(card.size.x, card.size.y / 2)
-	card.scale = Vector2(card_scale, card_scale)
+# --- Open, close and refresh (world_map.gd calls toggle and refresh) ---
+
+# Opens the card if it's closed, closes it if it's open (world_map.gd calls this when you click your character).
+func toggle() -> void:
+	if visible:
+		close()
+	else:
+		open()
+
+# Shows the card with your saved profile on the Edit page and a fresh friends list.
+func open() -> void:
+	visible = true
+	edit_page.reset()
+	refresh()
+	
+# Hides the card and closes any search pop-ups.
+func close() -> void:
+	visible = false
+	confirm_dialog.cancel()
+	for page in list_pages:
+		page.clear_search()
+
+# Asks the server for the whole friends list again. The server is the one source of truth, so after any change the
+# card reloads the list instead of patching it.
+func refresh() -> void:
+	Network.send({"type": "friends_list"})
 
 
-# Shows the -clicked icon on the selected tab and on the tab under the mouse, the normal icon on the others.
-func _update_tab_icons() -> void:
-	for i in tabs.get_tab_count():
-		var lit := i == tabs.current_tab or i == _hovered_tab
-		tabs.set_tab_icon(i, CLICKED_ICONS[i] if lit else NORMAL_ICONS[i])
+# --- Button handlers (connected in player_card.tscn) ---
 
+# The X button closes the card.
+func _on_btn_close_pressed() -> void:
+	close()
+
+
+# --- Tab, page and server handlers (connected in _ready) ---
 
 # Updates the tab icons, and reloads the lists when a list tab opens.
 func _on_tab_changed(tab: int) -> void:
@@ -134,11 +132,14 @@ func _on_save_requested(changes: Dictionary) -> void:
 # action names). Ids come from the server as floats, so int() converts them.
 func _on_row_action(action: String, info: Dictionary, page: ListPage) -> void:
 	var user_id := int(info.get("userId", 0))
+	var username := str(info.get("username", ""))
 	match action:
 		"accept", "decline":
 			Network.send({"type": "friend_respond", "requestId": int(info.get("requestId", 0)), "accept": action == "accept"})
 		"unfriend":
-			Network.send({"type": "unfriend", "userId": user_id})
+			# Asks first: unfriending can't be undone (they'd need a new request).
+			confirm_dialog.ask("Remove %s from your friends?" % username, "Unfriend",
+				func(): Network.send({"type": "unfriend", "userId": user_id}))
 		"star", "unstar":
 			Network.send({"type": "star_friend", "userId": user_id, "starred": action == "star"})
 		"unblock":
@@ -147,8 +148,14 @@ func _on_row_action(action: String, info: Dictionary, page: ListPage) -> void:
 			Network.send({"type": "friend_request", "username": str(info.get("username", ""))})
 			page.clear_search()
 		"block":
-			Network.send({"type": "block_user", "userId": user_id})
-			page.clear_search()
+			# Asks first: blocking also ends the friendship on the server (blockUser in friends.ts), and unblocking
+			# doesn't bring it back.
+			var message := "Block %s? You won't see each other on the map or in chat." % username
+			if info.get("relation", "") == "friend" or page == friend_page:
+				message += " They'll also be removed from your friends."
+			confirm_dialog.ask(message, "Block", func():
+				Network.send({"type": "block_user", "userId": user_id})
+				page.clear_search())
 
 
 # Handles the server's friends and profile messages: rebuilds the lists, shows search results and notices, and
@@ -184,6 +191,22 @@ func _on_message_received(data: Dictionary) -> void:
 				Session.character = data.get("character", Session.character)
 				profile_saved.emit(Session.username, Session.character)
 			edit_page.show_save_result(data)
+
+
+# --- Helpers ---
+
+# Scales the card by card_scale around the middle of its right edge, so it shrinks toward the right side of the
+# screen. Runs again if the card's size changes.
+func _apply_card_scale() -> void:
+	card.pivot_offset = Vector2(card.size.x, card.size.y / 2)
+	card.scale = Vector2(card_scale, card_scale)
+
+
+# Shows the -clicked icon on the selected tab and on the tab under the mouse, the normal icon on the others.
+func _update_tab_icons() -> void:
+	for i in tabs.get_tab_count():
+		var lit := i == tabs.current_tab or i == _hovered_tab
+		tabs.set_tab_icon(i, CLICKED_ICONS[i] if lit else NORMAL_ICONS[i])
 
 
 # Shows a notice on the list page that's open (or on Friends if the Edit tab is open).

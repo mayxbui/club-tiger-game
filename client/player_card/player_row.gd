@@ -5,7 +5,8 @@ extends HBoxContainer
 # Friends, Requests and Blocked pages and by the search pop-up, so every list looks the same.
 #
 # kind decides the status text and buttons (the action names are what action_pressed sends):
-#   "friend"        Online/Offline     Visit (disabled until dorms, #12), Unfriend -> "unfriend", Star -> "star"/"unstar"
+#   "friend"        Online/Offline     Visit (disabled until dorms, #12), Unfriend -> "unfriend", Star -> "star"/"unstar",
+#                                      Block -> "block"
 #   "incoming"      wants to be friends    Add -> "accept", Nope -> "decline"
 #   "outgoing"      request sent           (no buttons)
 #   "blocked"       blocked by you         Unblock -> "unblock", Report (disabled until reports exist)
@@ -48,6 +49,7 @@ func setup(person: Dictionary, kind: String) -> void:
 				_add_button("Starred", "unstar", YELLOW_THEME)
 			else:
 				_add_button("Star", "star", DARK_THEME)
+			_add_button("Block", "block", DARK_THEME)
 		"incoming":
 			label_status.text = "wants to be friends"
 			_add_button("Add", "accept", YELLOW_THEME)

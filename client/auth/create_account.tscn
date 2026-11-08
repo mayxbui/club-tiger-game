@@ -14,7 +14,7 @@
 [ext_resource type="FontFile" uid="uid://3trnlsdvfrph" path="res://client/assets/fonts/Inter/static/Inter_18pt-Medium.ttf" id="10_s26im"]
 [ext_resource type="Texture2D" uid="uid://cbnq8nqp0hebn" path="res://client/assets/buttons/btn-lg-yellow.png" id="11_s26im"]
 [ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="13_va36v"]
-[ext_resource type="FontFile" uid="uid://b8f25ur6e4wjy" path="res://client/assets/fonts/Inter/static/Inter_28pt-MediumItalic.ttf" id="14_va36v"]
+[ext_resource type="LabelSettings" path="res://client/assets/error_label_settings.tres" id="99_error"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uaicx"]
 
@@ -169,12 +169,27 @@ backspace_deletes_composite_character_enabled = true
 clear_button_enabled = true
 secret = true
 
+[node name="CheckShowPassword" type="CheckBox" parent="CanvasLayer/OuterPanel" unique_id=1706277251]
+layout_mode = 0
+offset_left = 1194.0
+offset_top = 470.0
+offset_right = 1429.0
+offset_bottom = 506.0
+focus_mode = 0
+theme_override_colors/font_color = Color(0.19215687, 0.18039216, 0.1764706, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("13_va36v")
+theme_override_font_sizes/font_size = 22
+text = "Show password"
+
 [node name="BtnCreate" type="Button" parent="CanvasLayer/OuterPanel" unique_id=800347633]
 layout_mode = 0
 offset_left = 1176.0
-offset_top = 473.0
+offset_top = 518.0
 offset_right = 1596.0
-offset_bottom = 542.3719
+offset_bottom = 587.3719
 scale = Vector2(1, 1.009054)
 theme_override_colors/font_color = Color(0.99567145, 0.8987797, 0.5378617, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
@@ -190,9 +205,9 @@ text = "Create an account"
 [node name="BtnLogin" type="Button" parent="CanvasLayer/OuterPanel" unique_id=870284456]
 layout_mode = 0
 offset_left = 1217.0
-offset_top = 564.0
+offset_top = 609.0
 offset_right = 1550.0
-offset_bottom = 604.0
+offset_bottom = 649.0
 theme_override_colors/font_color = Color(0.24322435, 0.24322438, 0.24322438, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
@@ -203,13 +218,11 @@ flat = true
 
 [node name="LabelDebug" type="Label" parent="CanvasLayer/OuterPanel" unique_id=1156320726]
 layout_mode = 0
-offset_left = 1124.0
-offset_top = 626.0
-offset_right = 1608.0
-offset_bottom = 664.0
-theme_override_colors/font_color = Color(0.8657458, 0.16693199, 0.09954848, 1)
-theme_override_fonts/font = ExtResource("14_va36v")
-theme_override_font_sizes/font_size = 20
+offset_left = 1100.0
+offset_top = 665.0
+offset_right = 1650.0
+offset_bottom = 765.0
+label_settings = ExtResource("99_error")
 horizontal_alignment = 1
 autowrap_mode = 2
 
@@ -219,5 +232,6 @@ one_shot = true
 
 [connection signal="pressed" from="CanvasLayer/OuterPanel/BtnBack" to="." method="_on_btn_back_pressed"]
 [connection signal="text_changed" from="CanvasLayer/OuterPanel/CharacterPanel/InputUsername" to="." method="_on_input_username_text_changed"]
+[connection signal="toggled" from="CanvasLayer/OuterPanel/CheckShowPassword" to="." method="_on_check_show_password_toggled"]
 [connection signal="pressed" from="CanvasLayer/OuterPanel/BtnCreate" to="." method="_on_btn_create_pressed"]
 [connection signal="pressed" from="CanvasLayer/OuterPanel/BtnLogin" to="." method="_on_btn_login_pressed"]

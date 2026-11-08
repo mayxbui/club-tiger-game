@@ -1,0 +1,144 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://client/other_player_card/other_player_card.gd" id="1_card"]
+[ext_resource type="Texture2D" uid="uid://csft3vuo5q7cy" path="res://client/assets/page-card/Card.png" id="2_card"]
+[ext_resource type="Texture2D" uid="uid://duk1vt1cnm26t" path="res://client/assets/page-card/card-white.png" id="3_white"]
+[ext_resource type="LabelSettings" uid="uid://bieh15rrbajlw" path="res://client/assets/label_settings.tres" id="4_title"]
+[ext_resource type="PackedScene" uid="uid://c8ipe7ahbtqpj" path="res://client/player/player_skeleton.tscn" id="5_skel"]
+[ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="6_medium"]
+[ext_resource type="Theme" uid="uid://dfungdn576rvd" path="res://client/assets/sub-theme-2.tres" id="7_yellow"]
+[ext_resource type="Theme" uid="uid://cry0ofe88mrqq" path="res://client/assets/sub-theme.tres" id="8_white"]
+[ext_resource type="Theme" uid="uid://1d8kr2ebnkqb" path="res://client/assets/base-theme.tres" id="9_base"]
+[ext_resource type="PackedScene" path="res://client/ui/confirm_dialog.tscn" id="10_confirm"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_card"]
+content_margin_left = 24.0
+content_margin_top = 24.0
+content_margin_right = 24.0
+content_margin_bottom = 24.0
+texture = ExtResource("2_card")
+texture_margin_left = 60.0
+texture_margin_top = 60.0
+texture_margin_right = 60.0
+texture_margin_bottom = 60.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_page"]
+content_margin_left = 30.0
+content_margin_top = 30.0
+content_margin_right = 30.0
+content_margin_bottom = 30.0
+texture = ExtResource("3_white")
+texture_margin_left = 60.0
+texture_margin_top = 60.0
+texture_margin_right = 60.0
+texture_margin_bottom = 60.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_status"]
+font = ExtResource("6_medium")
+font_size = 26
+font_color = Color(0.35, 0.35, 0.35, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_notice"]
+font = ExtResource("6_medium")
+font_size = 22
+font_color = Color(0.35, 0.35, 0.35, 1)
+
+[node name="OtherPlayerCard" type="CanvasLayer"]
+layer = 2
+script = ExtResource("1_card")
+
+[node name="Card" type="PanelContainer" parent="."]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 30.0
+offset_top = -390.0
+offset_right = 660.0
+offset_bottom = 390.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_card")
+
+[node name="Page" type="PanelContainer" parent="Card"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_page")
+
+[node name="VBox" type="VBoxContainer" parent="Card/Page"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="LabelName" type="Label" parent="Card/Page/VBox"]
+layout_mode = 2
+text = "username"
+label_settings = ExtResource("4_title")
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="Avatar" parent="Card/Page/VBox" instance=ExtResource("5_skel")]
+custom_minimum_size = Vector2(0, 340)
+layout_mode = 2
+size_flags_vertical = 3
+fit_to_size = true
+
+[node name="LabelStatus" type="Label" parent="Card/Page/VBox"]
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+label_settings = SubResource("LabelSettings_status")
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="Card/Page/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="BtnAddFriend" type="Button" parent="Card/Page/VBox/Buttons"]
+custom_minimum_size = Vector2(180, 70)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("7_yellow")
+theme_override_font_sizes/font_size = 28
+disabled = true
+text = "Add friend"
+
+[node name="BtnBlock" type="Button" parent="Card/Page/VBox/Buttons"]
+custom_minimum_size = Vector2(150, 70)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("8_white")
+theme_override_font_sizes/font_size = 28
+disabled = true
+text = "Block"
+
+[node name="BtnVisit" type="Button" parent="Card/Page/VBox/Buttons"]
+custom_minimum_size = Vector2(150, 70)
+layout_mode = 2
+tooltip_text = "Dorm visits are coming soon."
+focus_mode = 0
+theme = ExtResource("9_base")
+theme_override_font_sizes/font_size = 28
+disabled = true
+text = "Visit"
+
+[node name="LabelNotice" type="Label" parent="Card/Page/VBox"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+label_settings = SubResource("LabelSettings_notice")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="BtnClose" type="Button" parent="Card"]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+tooltip_text = "Close"
+focus_mode = 0
+theme = ExtResource("9_base")
+text = "X"
+
+[node name="ConfirmDialog" parent="." instance=ExtResource("10_confirm")]
+
+[connection signal="resized" from="Card" to="." method="_on_card_resized"]
+[connection signal="pressed" from="Card/Page/VBox/Buttons/BtnAddFriend" to="." method="_on_btn_add_friend_pressed"]
+[connection signal="pressed" from="Card/Page/VBox/Buttons/BtnBlock" to="." method="_on_btn_block_pressed"]
+[connection signal="pressed" from="Card/Page/VBox/Buttons/BtnVisit" to="." method="_on_btn_visit_pressed"]
+[connection signal="pressed" from="Card/BtnClose" to="." method="_on_btn_close_pressed"]

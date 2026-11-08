@@ -4,6 +4,7 @@ extends MarginContainer
 # Edit page: change your look and username, then Save or Cancel
 # Changes only touch a draft (and the preview) until Save. player_card.gd sends update_profile with save_requested's
 # changes and passes the reply back to show_save_result.
+# Button signals (pencil, Enter in the name box, Cancel, Save) are connected in edit_page.tscn.
 
 # Save was pressed with these changes: only the fields that differ from the saved profile, {username?, character?}.
 signal save_requested(changes: Dictionary)
@@ -22,24 +23,22 @@ var _editing_name := false
 @onready var preview: PlayerSkeleton = $VBox/Content/Preview
 @onready var customizer = $VBox/Content/CharacterCustomizer
 @onready var input_username: LineEdit = $VBox/NameRow/InputUsername
-@onready var btn_edit_name: TextureButton = $VBox/NameRow/BtnEditName
 @onready var label_notice: Label = $VBox/LabelNotice
-@onready var btn_cancel: Button = $VBox/Buttons/BtnCancel
 @onready var btn_save: Button = $VBox/Buttons/BtnSave
 
 
-# Connects the customizer, the pencil, Cancel and Save, and shows the saved profile.
+# --- Setup ---
+
+# Compiles the username rule, links the customizer to the draft, and shows the saved profile.
 func _ready() -> void:
 	_username_check.compile(USERNAME_RULE)
 	customizer.skin_changed.connect(func(id): _set_part("skin", id))
 	customizer.hair_changed.connect(func(id): _set_part("hair", id))
 	customizer.eyes_changed.connect(func(id): _set_part("eyes", id))
-	btn_edit_name.pressed.connect(_toggle_name_edit)
-	input_username.text_submitted.connect(func(_text): _toggle_name_edit())
-	btn_cancel.pressed.connect(reset)
-	btn_save.pressed.connect(_save)
 	reset()
 
+
+# --- Called by player_card.gd ---
 
 # Copies the saved look and name from Session into the draft and shows them. Runs when the card opens, on Cancel
 # and after a successful save.
@@ -65,45 +64,25 @@ func show_save_result(data: Dictionary) -> void:
 		label_notice.text = str(data.get("error", "Couldn't save. Please try again."))
 
 
-# Records one changed part from the customizer and redraws the preview.
-func _set_part(key: String, id: int) -> void:
-	_draft_character[key] = id
-	preview.apply_character(_draft_character)
+# --- Button and input handlers (connected in edit_page.tscn) ---
+
+# The pencil button: starts editing the name, or checks and keeps the typed name.
+func _on_btn_edit_name_pressed() -> void:
+	_toggle_name_edit()
 
 
-# Switches the name box between showing the name (flat, no box, can't type) and editing it (a normal text box with
-# the cursor at the end of the name).
-func _set_name_editing(on: bool) -> void:
-	_editing_name = on
-	input_username.editable = on
-	input_username.flat = not on
-	input_username.selecting_enabled = on
-	if on:
-		input_username.grab_focus()
-		input_username.caret_column = input_username.text.length()
-	else:
-		input_username.release_focus()
+# Enter in the name box does the same as the pencil.
+func _on_input_username_text_submitted(_new_text: String) -> void:
+	_toggle_name_edit()
 
 
-# The pencil button (and Enter in the name box): starts editing the name, or (if already editing) checks the typed
-# name and stops editing. Returns false if the typed name breaks the username rule, so editing continues.
-func _toggle_name_edit() -> bool:
-	if not _editing_name:
-		_set_name_editing(true)
-		return true
-	var typed := input_username.text.strip_edges()
-	if _username_check.search(typed) == null:
-		label_notice.text = USERNAME_HINT
-		return false
-	_draft_username = typed
-	input_username.text = typed
-	_set_name_editing(false)
-	label_notice.text = ""
-	return true
+# Cancel throws away the draft and shows the saved profile again.
+func _on_btn_cancel_pressed() -> void:
+	reset()
 
 
 # Sends only what changed (a still-open name box counts). Save stays disabled until show_save_result.
-func _save() -> void:
+func _on_btn_save_pressed() -> void:
 	if _editing_name and not _toggle_name_edit():
 		return
 	var changes := {}
@@ -120,6 +99,45 @@ func _save() -> void:
 	btn_save.disabled = true
 	label_notice.text = "Saving..."
 	save_requested.emit(changes)
+
+
+# --- Helpers ---
+
+# Starts editing the name, or (if already editing) checks the typed name and stops editing. Returns false if the
+# typed name breaks the username rule, so editing continues (Save uses this to stop).
+func _toggle_name_edit() -> bool:
+	if not _editing_name:
+		_set_name_editing(true)
+		return true
+	var typed := input_username.text.strip_edges()
+	if _username_check.search(typed) == null:
+		label_notice.text = USERNAME_HINT
+		return false
+	_draft_username = typed
+	input_username.text = typed
+	_set_name_editing(false)
+	label_notice.text = ""
+	return true
+
+
+# Switches the name box between showing the name (flat, no box, can't type) and editing it (a normal text box with
+# the cursor at the end of the name).
+func _set_name_editing(on: bool) -> void:
+	_editing_name = on
+	input_username.editable = on
+	input_username.flat = not on
+	input_username.selecting_enabled = on
+	if on:
+		input_username.grab_focus()
+		input_username.caret_column = input_username.text.length()
+	else:
+		input_username.release_focus()
+
+
+# Records one changed part from the customizer and redraws the preview.
+func _set_part(key: String, id: int) -> void:
+	_draft_character[key] = id
+	preview.apply_character(_draft_character)
 
 
 # The saved look from Session as whole numbers (JSON numbers arrive as floats; missing parts are 0).

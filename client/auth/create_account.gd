@@ -13,7 +13,7 @@ func _ready() -> void:
 	$CanvasLayer/OuterPanel/CharacterPanel/CharacterCustomizer.hair_changed.connect($CanvasLayer/OuterPanel/CharacterPanel/Player.change_hair)
 	$CanvasLayer/OuterPanel/CharacterPanel/CharacterCustomizer.eyes_changed.connect($CanvasLayer/OuterPanel/CharacterPanel/Player.change_eyes)
 
-# Shows one message in LabelDebug and restarts TimerDebug, which clears it a few seconds later.
+# Shows message in LabelDebug and restarts TimerDebug, which clears it a few seconds later.
 func show_message(msg: String) -> void:
 	$CanvasLayer/OuterPanel/LabelDebug.text = msg
 	$TimerDebug.start()
@@ -93,6 +93,11 @@ func _on_btn_back_pressed() -> void:
 func _on_input_username_text_changed(new_username: String) -> void:
 	$CanvasLayer/OuterPanel/CharacterPanel/Player.set_username(new_username)
 
-
+# Goes to the sign-in screen for players who already have an account.
 func _on_btn_login_pressed() -> void:
 	get_tree().change_scene_to_file("res://client/auth/signin.tscn")
+
+# Shows the password while CheckShowPassword is checked and hides it when unchecked, so the player can catch
+# a typo (this page has no "confirm password" box).
+func _on_check_show_password_toggled(toggled_on: bool) -> void:
+	$CanvasLayer/OuterPanel/InputPassword.secret = not toggled_on

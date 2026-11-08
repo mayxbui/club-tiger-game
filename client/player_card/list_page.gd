@@ -5,18 +5,21 @@ extends MarginContainer
 # Shows 1 player row/person and search bar at the bottom: as you type a username, matching players pop up
 # above it (from the server's search_users) with an Add button (Friends, Requests) or a Block button (Blocked).
 # This page only shows things and reports clicks; player_card.gd does the networking.
+# Search bar and search icon signals are connected in list_page.tscn (the three pages inherit them).
 
 # A button on a row or a search result was pressed (see the action names in player_row.gd).
 signal row_action(action: String, info: Dictionary)
 # The player paused typing in the search bar; player_card.gd sends search_users with this text.
 signal search_requested(query: String)
 
-const ROW_SCENE := preload("res://client/player-card/player_row.tscn")
+const ROW_SCENE := preload("res://client/player_card/player_row.tscn")
 # Wait this long after the last key before searching, so typing a name sends one search, not one per letter.
 const SEARCH_DELAY := 0.25
 
 @export_enum("friends", "requests", "blocked") var kind := "friends"
 @export var title := "Fellow Tigers"
+
+var _search_timer: Timer
 
 @onready var label_title: Label = $VBox/LabelTitle
 @onready var label_count: Label = $VBox/LabelCount
@@ -26,12 +29,11 @@ const SEARCH_DELAY := 0.25
 @onready var suggestion_list: VBoxContainer = $VBox/Suggestions/SuggestionList
 @onready var label_notice: Label = $VBox/LabelNotice
 @onready var search_bar: LineEdit = $VBox/SearchRow/SearchBar
-@onready var btn_search: TextureButton = $VBox/SearchRow/BtnSearch
-
-var _search_timer: Timer
 
 
-# Sets the title, hides the pop-up and connects the search bar (typing, Enter and the search icon).
+# --- Setup ---
+
+# Sets the title, hides the pop-up and creates the search-delay timer.
 func _ready() -> void:
 	label_title.text = title
 	suggestions.visible = false
@@ -41,10 +43,9 @@ func _ready() -> void:
 	_search_timer.wait_time = SEARCH_DELAY
 	_search_timer.timeout.connect(_search_now)
 	add_child(_search_timer)
-	search_bar.text_changed.connect(_on_search_text_changed)
-	search_bar.text_submitted.connect(func(_text): _search_now())
-	btn_search.pressed.connect(_search_now)
 
+
+# --- Called by player_card.gd ---
 
 # Rebuilds the list from a friends_list_result message: friends, incoming then outgoing requests, or blocked players.
 func show_list(data: Dictionary) -> void:
@@ -105,14 +106,28 @@ func clear_search() -> void:
 	suggestions.visible = false
 
 
+# --- Button and input handlers (connected in list_page.tscn) ---
+
 # Restarts the search delay as the player types, or closes the pop-up when the bar is empty.
-func _on_search_text_changed(text: String) -> void:
-	if text.strip_edges().is_empty():
+func _on_search_bar_text_changed(new_text: String) -> void:
+	if new_text.strip_edges().is_empty():
 		_search_timer.stop()
 		suggestions.visible = false
 		return
 	_search_timer.start()
 
+
+# Enter in the search bar searches right away.
+func _on_search_bar_text_submitted(_new_text: String) -> void:
+	_search_now()
+
+
+# The search icon searches right away.
+func _on_btn_search_pressed() -> void:
+	_search_now()
+
+
+# --- Helpers ---
 
 # Asks player_card.gd to search for what's in the bar now.
 func _search_now() -> void:
@@ -122,7 +137,8 @@ func _search_now() -> void:
 	search_requested.emit(query)
 
 
-# Adds one player_row to a list and passes its button presses on as row_action.
+# Adds one player_row to a list and passes its button presses on as row_action. Row buttons are made at runtime,
+# so they're connected here in code, not in a scene.
 func _add_row(parent: Container, person: Dictionary, row_kind: String) -> void:
 	var row: PlayerRow = ROW_SCENE.instantiate()
 	parent.add_child(row)

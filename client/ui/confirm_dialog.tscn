@@ -1,0 +1,84 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://client/ui/confirm_dialog.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://csft3vuo5q7cy" path="res://client/assets/page-card/Card.png" id="2_card"]
+[ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="3_medium"]
+[ext_resource type="Theme" uid="uid://cry0ofe88mrqq" path="res://client/assets/sub-theme.tres" id="4_white"]
+[ext_resource type="Theme" uid="uid://dfungdn576rvd" path="res://client/assets/sub-theme-2.tres" id="5_yellow"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_card"]
+content_margin_left = 40.0
+content_margin_top = 40.0
+content_margin_right = 40.0
+content_margin_bottom = 40.0
+texture = ExtResource("2_card")
+texture_margin_left = 60.0
+texture_margin_top = 60.0
+texture_margin_right = 60.0
+texture_margin_bottom = 60.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_message"]
+font = ExtResource("3_medium")
+font_size = 28
+font_color = Color(0, 0, 0, 1)
+
+[node name="ConfirmDialog" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_script")
+
+[node name="Dim" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.35)
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -150.0
+offset_right = 320.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_card")
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="LabelMessage" type="Label" parent="Panel/VBox"]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+text = "Are you sure?"
+label_settings = SubResource("LabelSettings_message")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="BtnCancel" type="Button" parent="Panel/VBox/Buttons"]
+custom_minimum_size = Vector2(200, 70)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("4_white")
+text = "Cancel"
+
+[node name="BtnConfirm" type="Button" parent="Panel/VBox/Buttons"]
+custom_minimum_size = Vector2(200, 70)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("5_yellow")
+text = "Yes"
+
+[connection signal="pressed" from="Panel/VBox/Buttons/BtnCancel" to="." method="_on_btn_cancel_pressed"]
+[connection signal="pressed" from="Panel/VBox/Buttons/BtnConfirm" to="." method="_on_btn_confirm_pressed"]

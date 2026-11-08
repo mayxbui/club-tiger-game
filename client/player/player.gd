@@ -1,5 +1,9 @@
 extends CharacterBody2D
 
+# Another player's character was left-clicked (only after set_clickable(true); world_map.gd opens the
+# other-player card).
+signal clicked
+
 # True only for this client's own player (set by world_map.gd); other players' copies leave it false.
 @export var is_local := false
 
@@ -75,6 +79,18 @@ func change_eyes(id: int) -> void:
 # Shows a player's name under their character; the map passes Session.username for the local player.
 func set_username(username: String) -> void:
 	$LabelUsername.text = username
+
+# Turns clicking on this character on or off. world_map.gd turns it on for other players only, so clicking your
+# own character still walks you there. While on, ClickArea takes the click, so it doesn't also walk you to them.
+func set_clickable(on: bool) -> void:
+	$ClickArea.mouse_filter = Control.MOUSE_FILTER_STOP if on else Control.MOUSE_FILTER_IGNORE
+
+# A left click on ClickArea (connected in player.tscn) sends `clicked`.
+func _on_click_area_gui_input(event: InputEvent) -> void:
+	var button := event as InputEventMouseButton
+	if button and button.button_index == MOUSE_BUTTON_LEFT and button.pressed:
+		$ClickArea.accept_event()
+		clicked.emit()
 
 # Shows a bubble text above player head
 # New bubbles stack, and each fades out after a few seconds

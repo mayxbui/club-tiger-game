@@ -1,9 +1,10 @@
 // Friends (#8) and blocks (#9): requests, the friends list, unfriend, stars, block/unblock and the player search.
-// The client side is the player card, client/player-card/player_card.gd.
+// The client side is the player card, client/player_card/player_card.gd, and the other-player card,
+// client/other_player_card/other_player_card.gd.
 //
 // Everything here is PRIVATE: This file must never import from index.ts
 //
-// Messages (must match client/player-card/player_card.gd):
+// Messages (must match client/player_card/player_card.gd):
 //   client -> server     friend_request           {username}
 //   server -> sender     friend_request_result    {success, error?}
 //   server -> addressee  friend_request_received  {requestId, fromUserId, fromUsername}   only if they're online
@@ -25,6 +26,8 @@
 //   client -> server     search_users             {query}
 //   server -> sender     search_users_result      {query, users: [{userId, username, character, relation}]}
 //                                                  relation: "none" | "friend" | "pending" | "blocked"
+//   client -> server     player_info              {userId}                                other-player card
+//   server -> sender     player_info_result       {success, error?, userId, username, character, relation}
 
 
 import WebSocket from "ws";
@@ -401,4 +404,39 @@ export async function searchUsers(socket: WebSocket, userId: number, query: unkn
             : "none"
     }));
     send(socket, { type: "search_users_result", query, users });
+}
+
+// Sends to the other-player card:  username, look, and how they relate to you ("friend", "pending", "blocked" or "none").
+export async function getPlayerInfo(socket: WebSocket, userId: number, otherId: unknown){
+    if (!isUserId(otherId) || otherId === userId) {
+        reject(socket, "player_info_result", "Player not found.");
+        return;
+    }
+    const result = await pool.query(
+        `SELECT u.id, u.username, c.skin, c.hair, c.eyes,
+            EXISTS (SELECT 1 FROM blocks b WHERE b.blocker_id = $1 AND b.blocked_id = u.id) AS blocked_by_me,
+            (SELECT f.status FROM friendships f WHERE
+                LEAST(f.requester_id, f.addressee_id) = LEAST($1, u.id)
+                AND GREATEST(f.requester_id, f.addressee_id) = GREATEST($1, u.id)) AS friendship
+        FROM users u LEFT JOIN characters c ON c.user_id = u.id
+        WHERE u.id = $2
+            AND NOT EXISTS (SELECT 1 FROM blocks b WHERE b.blocker_id = u.id AND b.blocked_id = $1)`,
+        [userId, otherId]
+    );
+    if (result.rows.length === 0) {
+        reject(socket, "player_info_result", "Player not found.");
+        return;
+    }
+    const row = result.rows[0];
+    send(socket, {
+        type: "player_info_result",
+        success: true,
+        userId: row.id,
+        username: row.username,
+        character: characterOf(row),
+        relation: row.blocked_by_me ? "blocked"
+            : row.friendship === "accepted" ? "friend"
+            : row.friendship === "pending" ? "pending"
+            : "none"
+    });
 }
