@@ -6,7 +6,7 @@ import { pool } from "./db.js";
 import { joinWorld, movePlayer, leaveWorld } from "./world.js";
 import { handleChat } from "./chat.js";
 import { getFriendsList, respondToRequest, sendFriendRequest, unfriend, starFriend, blockUser, unblockUser,
-    searchUsers } from "./friends.js";
+    searchUsers, blockedWith } from "./friends.js";
 import { updateProfile } from "./profile.js";
 
 // Initialize the WebSocket server
@@ -195,7 +195,8 @@ wsServer.on("connection", (socket) => {
                             error: "Please sign in."});
                         break;
                     }
-                    joinWorld(socket, userId, await getUserProfile(userId), message.x, message.y);
+                    // Players in a block with this one are hidden from them on the map.
+                    joinWorld(socket, userId, await getUserProfile(userId), message.x, message.y, await blockedWith(userId));
                     break;
                 }
 
@@ -206,7 +207,7 @@ wsServer.on("connection", (socket) => {
                     break;
                 }
 
-                // Sends a chat message to everyone on the map
+                // Sends a chat message to everyone on the map (except players being blocked)
                 case "chat": {
                     const userId = socketUsers.get(socket);
                     if(userId) handleChat(socket, userId, message.text);

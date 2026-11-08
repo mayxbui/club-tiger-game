@@ -4,12 +4,14 @@
 // Messages (must match client/map/world_map.gd):
 //   client -> server   chat           {text}
 //   server -> everyone chat_message   {userId, username, text}     also sent back to the sender, so everyone
-//                                                                   (including them) sees the same text
+//                                                                   (including them) sees the same text. Players
+//                                                                   in a block with the sender (either way) don't
+//                                                                   get it (#9)
 //   server -> sender   chat_rejected  {reason}                     only the sender sees why it wasn't sent
 
 import { WebSocket } from "ws";
 import { findBlockedPhrase, containsLink } from "./chatFilter.js";
-import { getWorldUsername, broadcastToWorld } from "./world.js";
+import { getWorldUsername, broadcastChat } from "./world.js";
 
 const MAX_CHAT_LENGTH = 48;   
 const MAX_MESSAGES = 3;        
@@ -27,7 +29,8 @@ function reject(socket: WebSocket, reason: string){
     });
 }
 
-// Cleans the message, checks length, rate limit and blocked words, then broadcasts it
+// Cleans the message, checks length, rate limit and blocked words, then broadcasts it to everyone on the map except
+// players blocked with the sender.
 export function handleChat(socket: WebSocket, userId: number, chatMsg: unknown): void{
     const username = getWorldUsername(socket,userId);
     if(!username) return;
@@ -66,7 +69,7 @@ export function handleChat(socket: WebSocket, userId: number, chatMsg: unknown):
         reject(socket, "Your message wasn't sent because it contains blocked words.")
         return;
     }
-    broadcastToWorld({
+    broadcastChat(userId, {
         "type": "chat_message",
         userId,
         username,

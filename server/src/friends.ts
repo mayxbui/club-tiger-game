@@ -28,7 +28,7 @@
 
 
 import WebSocket from "ws";
-import { getWorldUsername } from "./world.js";
+import { getWorldUsername, setBlocked } from "./world.js";
 import { pool } from "./db.js";
 
 // Sends one JSON message to one socket (own copy, since this file can't import index.ts).
@@ -328,6 +328,8 @@ export async function blockUser(socket: WebSocket, userId: number, otherId: unkn
         client.release();
     }
     send(socket, { type: "block_result", success: true });
+    // Hide the two from each other on the map right away (world.ts).
+    setBlocked(userId, otherId, true);
 }
 
 // Removes this player's block on another player. It doesn't bring back the old friendship.
@@ -338,6 +340,19 @@ export async function unblockUser(socket: WebSocket, userId: number, otherId: un
     }
     await pool.query(`DELETE FROM blocks WHERE blocker_id = $1 AND blocked_id = $2`, [userId, otherId]);
     send(socket, { type: "unblock_result", success: true });
+    // Show them to each other again, unless the other player still blocks this one.
+    if ((await blockedWith(userId)).has(otherId)) return;
+    setBlocked(userId, otherId, false);
+}
+
+// Returns the ids of players, if they blocked them or were blocked by them. 
+// world.ts hides these players from each other; index.ts loads it when a player joins the map.
+export async function blockedWith(userId: number): Promise<Set<number>> {
+    const result = await pool.query(
+        `SELECT blocker_id, blocked_id FROM blocks WHERE blocker_id = $1 OR blocked_id = $1`,
+        [userId]
+    );
+    return new Set(result.rows.map((row) => (row.blocker_id === userId ? row.blocked_id : row.blocker_id)));
 }
 
 // Rate limit for search_users (the client sends it while the player types): at most 10 per 5 seconds per player

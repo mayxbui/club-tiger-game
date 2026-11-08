@@ -32,6 +32,8 @@ This file is the source of truth for the rules. Change it whenever a rule is add
 The blocked terms for R1-R3 and R7 are in `server/src/data/blocked_terms.json`. Keep that list short so it is easy to
 review.
 
+Players either one blocked the other, from the Blocked page of the player card don't see each other on the map.
+
 When the server rejects a message, only the sender sees why (`chat_rejected`). Nobody else sees anything, and the
 server logs the user id and matched word.
 
@@ -59,6 +61,7 @@ Newest first. Each entry says what changed, why, and where in the code.
 
 | Date       | Change | Why | Where |
 |------------|--------|-----|-------|
+| 2026-11-08 | Blocked players no longer see each other's chat or characters on the map (both directions, right away). | #9: blocking someone should stop them reaching you at all. | `server/src/world.ts`, `server/src/chat.ts`, `server/src/friends.ts` |
 | 2026-11-07 | Added R7: strong swearing (`fuck`, `shit`, `damn`, `wtf`, ...) is blocked; mild words stay allowed. The filter now also catches `*` masks, `x` as a hidden letter, and spaced-out letters. | Players got crude words through by censoring or spacing them on purpose. | `server/src/chatFilter.ts`, `server/src/data/blocked_terms.json`, `server/src/test/chatFilter.test.ts`, `server/src/test/lists.test.ts` |
 | 2026-10-28 | Built the light filter: whole-word checks against a short R1-R3 list, look-alike letters, and the link check (R4) with porn spam endings and Unicode dots. Casual swearing now gets through. | Viral porn spam links; the old filter blocked swearing the rules allow and caused false alarms. | `server/src/chatFilter.ts`, `server/src/chat.ts`, `server/src/data/blocked_terms.json` |
 | 2026-10-24 | Switched to **open chat with rules** and a light filter. Wrote rules R1-R6. Casual swearing is now allowed. | The game is for adults; a strict filter caused false alarms and was hard to maintain. | `CHAT_RULES.md`, TODO in `server/src/chatFilter.ts` |
