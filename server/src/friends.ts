@@ -204,7 +204,7 @@ function isUserId(value: unknown): value is number {
 }
 
 // The pair condition used by several queries: the friendships row between $1 and $2, whichever side asked.
-const PAIR = `LEAST(requester_id, addressee_id) = LEAST($1, $2) AND GREATEST(requester_id, addressee_id) = GREATEST($1, $2)`;
+const PAIR = `LEAST(requester_id, addressee_id) = LEAST($1::int, $2::int) AND GREATEST(requester_id, addressee_id) = GREATEST($1::int, $2::int)`;
 
 // Sends the player their friends (with avatar, online status and star; starred first, then by name), pending requests
 // (incoming and outgoing) and the players they blocked.
