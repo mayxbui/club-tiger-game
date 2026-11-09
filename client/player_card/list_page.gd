@@ -27,7 +27,7 @@ var _search_timer: Timer
 @onready var label_empty: Label = $VBox/LabelEmpty
 @onready var suggestions: PanelContainer = $VBox/Suggestions
 @onready var suggestion_list: VBoxContainer = $VBox/Suggestions/SuggestionList
-@onready var label_notice: Label = $VBox/LabelNotice
+@onready var label_notice: RichTextLabel = $VBox/LabelNotice  # RichTextLabel so notices can color names with [color]
 @onready var search_bar: LineEdit = $VBox/SearchRow/SearchBar
 
 

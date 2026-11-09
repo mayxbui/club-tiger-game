@@ -17,7 +17,7 @@ const EDGE_MARGIN_TOP := 130.0
 const EDGE_MARGIN_BOTTOM := 100.0
 const PLAY_AREA := Rect2(EDGE_MARGIN_SIDE, EDGE_MARGIN_TOP, 1920.0 - 2 * EDGE_MARGIN_SIDE, 1080.0 - EDGE_MARGIN_TOP - EDGE_MARGIN_BOTTOM)
 # Random spawn point along the bottom path
-var spawnX = randf_range(200,1820)
+var spawnX = randf_range(800,1120)
 var spawnY = 900
 # Every other player on the map: userId (int) -> their Player node under $Players.
 var remote_players := {}

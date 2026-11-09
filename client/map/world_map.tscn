@@ -5,12 +5,12 @@
 [ext_resource type="PackedScene" uid="uid://dhd56c0gjjps" path="res://client/player/player.tscn" id="2_qgng5"]
 [ext_resource type="Theme" uid="uid://cry0ofe88mrqq" path="res://client/assets/sub-theme.tres" id="4_0r5pw"]
 [ext_resource type="Theme" uid="uid://1d8kr2ebnkqb" path="res://client/assets/base-theme.tres" id="4_msnty"]
-[ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="5_0r5pw"]
 [ext_resource type="Theme" uid="uid://dfungdn576rvd" path="res://client/assets/sub-theme-2.tres" id="7_jb7xo"]
 [ext_resource type="PackedScene" uid="uid://7gulqypbu8px" path="res://client/player_card/player_card.tscn" id="8_uf8tm"]
-[ext_resource type="PackedScene" path="res://client/other_player_card/other_player_card.tscn" id="13_other_card"]
+[ext_resource type="LabelSettings" uid="uid://bieh15rrbajlw" path="res://client/assets/label_settings.tres" id="8_w0775"]
 [ext_resource type="Texture2D" uid="uid://bj5semtccjge3" path="res://client/assets/buttons/btn-tiger.png" id="9_tiger"]
 [ext_resource type="Texture2D" uid="uid://bswk30oesnss6" path="res://client/assets/buttons/btn-tiger-clicked.png" id="10_tiger_clicked"]
+[ext_resource type="PackedScene" uid="uid://dt4x1rbynec5v" path="res://client/other_player_card/other_player_card.tscn" id="13_other_card"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0r5pw"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -20,14 +20,15 @@ position = Vector2(207, 223)
 script = ExtResource("1_vmchv")
 
 [node name="Map" type="Sprite2D" parent="." unique_id=1215983187]
-position = Vector2(751.941, 321.7168)
-scale = Vector2(1.0023762, 1.0023762)
+position = Vector2(-207, -223)
 texture = ExtResource("2_msnty")
+centered = false
 metadata/_edit_group_ = true
 metadata/_edit_lock_ = true
 
 [node name="Players" type="Node2D" parent="." unique_id=1332202207]
 y_sort_enabled = true
+metadata/_edit_lock_ = true
 
 [node name="Player" parent="Players" unique_id=1159748652 instance=ExtResource("2_qgng5")]
 position = Vector2(1671, 686)
@@ -93,14 +94,12 @@ backspace_deletes_composite_character_enabled = true
 
 [node name="ChatLimit" type="Label" parent="ChatUI/ChatPanel/VBoxContainer/HBoxContainer" unique_id=1694715929]
 layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8784314)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("5_0r5pw")
 theme_override_font_sizes/font_size = 22
 text = "160"
+label_settings = ExtResource("8_w0775")
 
 [node name="BtnSend" type="Button" parent="ChatUI/ChatPanel/VBoxContainer/HBoxContainer" unique_id=313792787]
-custom_maximum_size = Vector2(110, -1)
+custom_maximum_size = Vector2(150, -1)
 layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("7_jb7xo")
@@ -113,6 +112,6 @@ layout_mode = 2
 offset = Vector2(-30, -50)
 transform = Transform2D(1, 0, 0, 1, -30, -50)
 
-[node name="OtherPlayerCard" parent="." instance=ExtResource("13_other_card")]
+[node name="OtherPlayerCard" parent="." unique_id=2112691736 instance=ExtResource("13_other_card")]
 
 [connection signal="pressed" from="BtnLogout" to="." method="_on_btn_logout_pressed"]

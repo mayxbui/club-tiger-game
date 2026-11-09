@@ -9,7 +9,7 @@ extends CanvasLayer
 # What to run if the player confirms (empty while the dialog is closed).
 var _on_confirm := Callable()
 
-@onready var label_message: Label = $Panel/VBox/LabelMessage
+@onready var label_message: RichTextLabel = $Panel/VBox/LabelMessage
 @onready var btn_confirm: Button = $Panel/VBox/Buttons/BtnConfirm
 
 

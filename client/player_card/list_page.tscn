@@ -75,13 +75,15 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_popup")
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="LabelNotice" type="Label" parent="VBox"]
+[node name="LabelNotice" type="RichTextLabel" parent="VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.35, 0.35, 0.35, 1)
-theme_override_fonts/font = ExtResource("3_medium")
-theme_override_font_sizes/font_size = 18
+theme_override_colors/default_color = Color(0.35, 0.35, 0.35, 1)
+theme_override_fonts/normal_font = ExtResource("3_medium")
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
 horizontal_alignment = 1
-autowrap_mode = 3
 
 [node name="SearchRow" type="HBoxContainer" parent="VBox"]
 layout_mode = 2

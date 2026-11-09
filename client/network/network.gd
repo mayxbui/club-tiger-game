@@ -5,12 +5,14 @@ signal connected
 signal disconnected
 
 var socket := WebSocketPeer.new()
-# TODO: itch.io serves the game over https, and browsers block plain ws:// from an https page.
-# Before deploying, this must be a wss:// URL (needs a domain + TLS certificate on the VM, e.g. Caddy).
-# OS.has_feature("web") returns true in the HTML5 export, so you can keep ws:// for local testing.
-var url := "ws://20.88.18.140:3103"
-var last_state := WebSocketPeer.STATE_CLOSED
 
+# ws:// for local testing.
+#var url := "ws://20.88.18.140:3103"
+
+# The server is behind Caddy on the VM which turns wss:// on port 443 into WebSocket on localhost:3103.
+var url := "wss://server.clubtiger.app"
+
+var last_state := WebSocketPeer.STATE_CLOSED
 const SESSION_FILE := "user://session.txt"
 const RECONNECT_DELAY_SECONDS := 2.0
 # True while a reconnect is waiting out its delay, so a second one isn't started.

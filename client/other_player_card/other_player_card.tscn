@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dt4x1rbynec5v"]
 
-[ext_resource type="Script" path="res://client/other_player_card/other_player_card.gd" id="1_card"]
+[ext_resource type="Script" uid="uid://cyg3elb6kwmys" path="res://client/other_player_card/other_player_card.gd" id="1_card"]
 [ext_resource type="Texture2D" uid="uid://csft3vuo5q7cy" path="res://client/assets/page-card/Card.png" id="2_card"]
 [ext_resource type="Texture2D" uid="uid://duk1vt1cnm26t" path="res://client/assets/page-card/card-white.png" id="3_white"]
 [ext_resource type="LabelSettings" uid="uid://bieh15rrbajlw" path="res://client/assets/label_settings.tres" id="4_title"]
@@ -43,11 +43,11 @@ font = ExtResource("6_medium")
 font_size = 22
 font_color = Color(0.35, 0.35, 0.35, 1)
 
-[node name="OtherPlayerCard" type="CanvasLayer"]
+[node name="OtherPlayerCard" type="CanvasLayer" unique_id=1998546776]
 layer = 2
 script = ExtResource("1_card")
 
-[node name="Card" type="PanelContainer" parent="."]
+[node name="Card" type="PanelContainer" parent="." unique_id=1896007392]
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
@@ -58,39 +58,39 @@ offset_bottom = 390.0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_card")
 
-[node name="Page" type="PanelContainer" parent="Card"]
+[node name="Page" type="PanelContainer" parent="Card" unique_id=1913205491]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_page")
 
-[node name="VBox" type="VBoxContainer" parent="Card/Page"]
+[node name="VBox" type="VBoxContainer" parent="Card/Page" unique_id=1632099266]
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="LabelName" type="Label" parent="Card/Page/VBox"]
+[node name="LabelName" type="Label" parent="Card/Page/VBox" unique_id=300456611]
 layout_mode = 2
 text = "username"
 label_settings = ExtResource("4_title")
 horizontal_alignment = 1
 text_overrun_behavior = 3
 
-[node name="Avatar" parent="Card/Page/VBox" instance=ExtResource("5_skel")]
+[node name="Avatar" parent="Card/Page/VBox" unique_id=576535413 instance=ExtResource("5_skel")]
 custom_minimum_size = Vector2(0, 340)
 layout_mode = 2
 size_flags_vertical = 3
 fit_to_size = true
 
-[node name="LabelStatus" type="Label" parent="Card/Page/VBox"]
+[node name="LabelStatus" type="Label" parent="Card/Page/VBox" unique_id=2033262847]
 custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 label_settings = SubResource("LabelSettings_status")
 horizontal_alignment = 1
 
-[node name="Buttons" type="HBoxContainer" parent="Card/Page/VBox"]
+[node name="Buttons" type="HBoxContainer" parent="Card/Page/VBox" unique_id=1637445086]
 layout_mode = 2
 theme_override_constants/separation = 14
 alignment = 1
 
-[node name="BtnAddFriend" type="Button" parent="Card/Page/VBox/Buttons"]
+[node name="BtnAddFriend" type="Button" parent="Card/Page/VBox/Buttons" unique_id=444878985]
 custom_minimum_size = Vector2(180, 70)
 layout_mode = 2
 focus_mode = 0
@@ -99,7 +99,7 @@ theme_override_font_sizes/font_size = 28
 disabled = true
 text = "Add friend"
 
-[node name="BtnBlock" type="Button" parent="Card/Page/VBox/Buttons"]
+[node name="BtnBlock" type="Button" parent="Card/Page/VBox/Buttons" unique_id=590441539]
 custom_minimum_size = Vector2(150, 70)
 layout_mode = 2
 focus_mode = 0
@@ -108,7 +108,7 @@ theme_override_font_sizes/font_size = 28
 disabled = true
 text = "Block"
 
-[node name="BtnVisit" type="Button" parent="Card/Page/VBox/Buttons"]
+[node name="BtnVisit" type="Button" parent="Card/Page/VBox/Buttons" unique_id=1160576548]
 custom_minimum_size = Vector2(150, 70)
 layout_mode = 2
 tooltip_text = "Dorm visits are coming soon."
@@ -118,14 +118,14 @@ theme_override_font_sizes/font_size = 28
 disabled = true
 text = "Visit"
 
-[node name="LabelNotice" type="Label" parent="Card/Page/VBox"]
+[node name="LabelNotice" type="Label" parent="Card/Page/VBox" unique_id=1304751231]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 label_settings = SubResource("LabelSettings_notice")
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="BtnClose" type="Button" parent="Card"]
+[node name="BtnClose" type="Button" parent="Card" unique_id=274282990]
 custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -135,7 +135,7 @@ focus_mode = 0
 theme = ExtResource("9_base")
 text = "X"
 
-[node name="ConfirmDialog" parent="." instance=ExtResource("10_confirm")]
+[node name="ConfirmDialog" parent="." unique_id=1410633344 instance=ExtResource("10_confirm")]
 
 [connection signal="resized" from="Card" to="." method="_on_card_resized"]
 [connection signal="pressed" from="Card/Page/VBox/Buttons/BtnAddFriend" to="." method="_on_btn_add_friend_pressed"]

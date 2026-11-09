@@ -89,12 +89,12 @@ func _on_btn_close_pressed() -> void:
 
 # Asks, then sends a friend request.
 func _on_btn_add_friend_pressed() -> void:
-	confirm_dialog.ask("Send a friend request to %s?" % _username, "Send", _send_friend_request)
+	confirm_dialog.ask("Send a friend request to [color=#aa2626]%s[/color]?" % _username, "Send", _send_friend_request)
 
 
 # Asks, then blocks. Blocking a friend also ends the friendship (blockUser in friends.ts), so the question says so.
 func _on_btn_block_pressed() -> void:
-	var message := "Block %s? You won't see each other on the map or in chat." % _username
+	var message := "Block [color=#aa2626]%s[/color]? You won't see each other on the map or in chat." % _username
 	if _relation == "friend":
 		message += " They'll also be removed from your friends."
 	confirm_dialog.ask(message, "Block", _send_block)
@@ -103,7 +103,7 @@ func _on_btn_block_pressed() -> void:
 # Asks, then visits their dorm. BtnVisit is disabled in the scene until dorms exist.
 func _on_btn_visit_pressed() -> void:
 	# Next checkpoint (dorms): send the visit message here instead of the notice, and enable BtnVisit in the scene.
-	confirm_dialog.ask("Visit %s's dorm?" % _username, "Visit", func(): label_notice.text = "Dorm visits are coming soon.")
+	confirm_dialog.ask("Visit [color=#1c94e3]%s[/color]'s dorm?" % _username, "Visit", func(): label_notice.text = "Dorm visits are coming soon.")
 
 
 # Keeps the card pinned to the left edge if its size changes.

@@ -138,7 +138,7 @@ func _on_row_action(action: String, info: Dictionary, page: ListPage) -> void:
 			Network.send({"type": "friend_respond", "requestId": int(info.get("requestId", 0)), "accept": action == "accept"})
 		"unfriend":
 			# Asks first: unfriending can't be undone (they'd need a new request).
-			confirm_dialog.ask("Remove %s from your friends?" % username, "Unfriend",
+			confirm_dialog.ask("Remove [color=#aa2626]%s[/color] from your friends?" % username, "Unfriend",
 				func(): Network.send({"type": "unfriend", "userId": user_id}))
 		"star", "unstar":
 			Network.send({"type": "star_friend", "userId": user_id, "starred": action == "star"})
@@ -150,7 +150,7 @@ func _on_row_action(action: String, info: Dictionary, page: ListPage) -> void:
 		"block":
 			# Asks first: blocking also ends the friendship on the server (blockUser in friends.ts), and unblocking
 			# doesn't bring it back.
-			var message := "Block %s? You won't see each other on the map or in chat." % username
+			var message := "Block [color=#aa2626]%s[/color]? You won't see each other on the map or in chat." % username
 			if info.get("relation", "") == "friend" or page == friend_page:
 				message += " They'll also be removed from your friends."
 			confirm_dialog.ask(message, "Block", func():
@@ -177,11 +177,11 @@ func _on_message_received(data: Dictionary) -> void:
 				_notice(str(data.get("error", "Something went wrong.")))
 			refresh()
 		"friend_request_received":
-			request_page.show_notice("%s wants to be friends!" % str(data.get("fromUsername", "Someone")))
+			request_page.show_notice("[color=#1c94e3]%s[/color] wants to be friends!" % str(data.get("fromUsername", "Someone")))
 			refresh()
 		"friend_request_answered":
 			var answer := "accepted" if data.get("accepted", false) else "declined"
-			_notice("%s %s your request." % [str(data.get("username", "Someone")), answer])
+			_notice("[color=#1c94e3]%s[/color] %s your request." % [str(data.get("username", "Someone")), answer])
 			refresh()
 		"friend_removed":
 			refresh()

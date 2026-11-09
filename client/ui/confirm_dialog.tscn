@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bes3uvi0qag3e"]
 
-[ext_resource type="Script" path="res://client/ui/confirm_dialog.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://bi5na8w3r5yl6" path="res://client/ui/confirm_dialog.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://csft3vuo5q7cy" path="res://client/assets/page-card/Card.png" id="2_card"]
 [ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="3_medium"]
 [ext_resource type="Theme" uid="uid://cry0ofe88mrqq" path="res://client/assets/sub-theme.tres" id="4_white"]
@@ -17,16 +17,11 @@ texture_margin_top = 60.0
 texture_margin_right = 60.0
 texture_margin_bottom = 60.0
 
-[sub_resource type="LabelSettings" id="LabelSettings_message"]
-font = ExtResource("3_medium")
-font_size = 28
-font_color = Color(0, 0, 0, 1)
-
-[node name="ConfirmDialog" type="CanvasLayer"]
+[node name="ConfirmDialog" type="CanvasLayer" unique_id=1585984156]
 layer = 10
 script = ExtResource("1_script")
 
-[node name="Dim" type="ColorRect" parent="."]
+[node name="Dim" type="ColorRect" parent="." unique_id=258979710]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -34,7 +29,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.35)
 
-[node name="Panel" type="PanelContainer" parent="."]
+[node name="Panel" type="PanelContainer" parent="." unique_id=1953647530]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -48,32 +43,36 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_card")
 
-[node name="VBox" type="VBoxContainer" parent="Panel"]
+[node name="VBox" type="VBoxContainer" parent="Panel" unique_id=1990578624]
 layout_mode = 2
 theme_override_constants/separation = 30
 alignment = 1
 
-[node name="LabelMessage" type="Label" parent="Panel/VBox"]
+[node name="LabelMessage" type="RichTextLabel" parent="Panel/VBox" unique_id=545341044]
 custom_minimum_size = Vector2(520, 0)
 layout_mode = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("3_medium")
+theme_override_font_sizes/normal_font_size = 25
+bbcode_enabled = true
 text = "Are you sure?"
-label_settings = SubResource("LabelSettings_message")
+fit_content = true
+scroll_active = false
 horizontal_alignment = 1
-autowrap_mode = 3
 
-[node name="Buttons" type="HBoxContainer" parent="Panel/VBox"]
+[node name="Buttons" type="HBoxContainer" parent="Panel/VBox" unique_id=805825671]
 layout_mode = 2
 theme_override_constants/separation = 30
 alignment = 1
 
-[node name="BtnCancel" type="Button" parent="Panel/VBox/Buttons"]
+[node name="BtnCancel" type="Button" parent="Panel/VBox/Buttons" unique_id=987384697]
 custom_minimum_size = Vector2(200, 70)
 layout_mode = 2
 focus_mode = 0
 theme = ExtResource("4_white")
 text = "Cancel"
 
-[node name="BtnConfirm" type="Button" parent="Panel/VBox/Buttons"]
+[node name="BtnConfirm" type="Button" parent="Panel/VBox/Buttons" unique_id=14525776]
 custom_minimum_size = Vector2(200, 70)
 layout_mode = 2
 focus_mode = 0
