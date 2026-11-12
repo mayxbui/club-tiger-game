@@ -4,7 +4,7 @@ extends CanvasLayer
 # Other-player card: opens on the LEFT side of the map when you click another player (the player card stays on the
 # right, so both can be open). Shows their username, avatar and how they relate to you, with Add friend, Block and
 # Visit dorm. Every button asks first through the ConfirmDialog child.
-# world_map.gd calls open_for(userId) on a click and close() when that player leaves the map.
+# The room (client/room/room.gd) calls open_for(userId) on a click and close() when that player leaves the room.
 #
 # Messages (server/src/friends.ts):
 #   send     player_info {userId}  -> player_info_result {success, error?, userId, username, character, relation}
@@ -30,6 +30,7 @@ var _waiting_for := ""
 @onready var label_status: Label = $Card/Page/VBox/LabelStatus
 @onready var btn_add_friend: Button = $Card/Page/VBox/Buttons/BtnAddFriend
 @onready var btn_block: Button = $Card/Page/VBox/Buttons/BtnBlock
+@onready var btn_visit: Button = $Card/Page/VBox/Buttons/BtnVisit
 @onready var label_notice: Label = $Card/Page/VBox/LabelNotice
 @onready var confirm_dialog: ConfirmDialog = $ConfirmDialog
 
@@ -50,7 +51,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
-# --- Called by world_map.gd ---
+# --- Called by the room (room.gd) ---
 
 # Opens the card for one player and asks the server for their name, look and relation. The buttons stay disabled
 # until the reply arrives.
@@ -75,7 +76,7 @@ func close() -> void:
 	_waiting_for = ""
 
 
-# The player this card shows, or 0 if it's closed (world_map.gd closes the card when that player leaves).
+# The player this card shows, or 0 if it's closed (room.gd closes the card when that player leaves).
 func shown_user_id() -> int:
 	return _user_id if visible else 0
 
@@ -100,10 +101,10 @@ func _on_btn_block_pressed() -> void:
 	confirm_dialog.ask(message, "Block", _send_block)
 
 
-# Asks, then visits their dorm. BtnVisit is disabled in the scene until dorms exist.
+# Asks, then visits their dorm. Only friends can visit (the server checks too), so BtnVisit is only on for friends.
 func _on_btn_visit_pressed() -> void:
-	# Next checkpoint (dorms): send the visit message here instead of the notice, and enable BtnVisit in the scene.
-	confirm_dialog.ask("Visit [color=#1c94e3]%s[/color]'s dorm?" % _username, "Visit", func(): label_notice.text = "Dorm visits are coming soon.")
+	var owner_id := _user_id
+	confirm_dialog.ask("Visit [color=#1c94e3]%s[/color]'s dorm?" % _username, "Visit", func(): Session.go_to_dorm(owner_id))
 
 
 # Keeps the card pinned to the left edge if its size changes.
@@ -182,6 +183,7 @@ func _set_relation(relation: String) -> void:
 	btn_add_friend.text = "Add friend"
 	btn_add_friend.disabled = relation != "none"
 	btn_block.disabled = relation not in ["none", "pending", "friend"]
+	btn_visit.disabled = relation != "friend"
 	match relation:
 		"friend":
 			label_status.text = "Friends"

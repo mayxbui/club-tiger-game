@@ -7,7 +7,7 @@ extends CanvasLayer
 # The X button is connected in player_card.tscn; tab, page and server signals are connected in _ready.
 # Message: see the headers of server/src/friends.ts and server/src/profile.ts.
 
-# Save on the Edit page worked (Session is already updated): world_map.gd redraws the local player.
+# Save on the Edit page worked (Session is already updated): the room (room.gd) redraws the local player.
 signal profile_saved(username: String, character: Dictionary)
 
 enum Tab { EDIT, FRIENDS, REQUESTS, BLOCKED }
@@ -77,9 +77,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
-# --- Open, close and refresh (world_map.gd calls toggle and refresh) ---
+# --- Open, close and refresh (the HUD calls toggle, room.gd calls refresh) ---
 
-# Opens the card if it's closed, closes it if it's open (world_map.gd calls this when you click your character).
+# Opens the card if it's closed, closes it if it's open (the HUD's tiger button calls this).
 func toggle() -> void:
 	if visible:
 		close()
@@ -140,6 +140,10 @@ func _on_row_action(action: String, info: Dictionary, page: ListPage) -> void:
 			# Asks first: unfriending can't be undone (they'd need a new request).
 			confirm_dialog.ask("Remove [color=#aa2626]%s[/color] from your friends?" % username, "Unfriend",
 				func(): Network.send({"type": "unfriend", "userId": user_id}))
+		"visit":
+			# Asks first: visiting leaves the room you're in.
+			confirm_dialog.ask("Visit [color=#1c94e3]%s[/color]'s dorm?" % username, "Visit",
+				func(): Session.go_to_dorm(user_id))
 		"star", "unstar":
 			Network.send({"type": "star_friend", "userId": user_id, "starred": action == "star"})
 		"unblock":

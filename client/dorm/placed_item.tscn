@@ -1,0 +1,44 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://client/dorm/placed_item.gd" id="1_item"]
+[ext_resource type="Theme" uid="uid://1d8kr2ebnkqb" path="res://client/assets/base-theme.tres" id="2_base"]
+[ext_resource type="Theme" uid="uid://dfungdn576rvd" path="res://client/assets/sub-theme-2.tres" id="3_yellow"]
+
+[node name="PlacedItem" type="Node2D"]
+script = ExtResource("1_item")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+
+[node name="Toolbar" type="HBoxContainer" parent="."]
+z_index = 100
+offset_right = 300.0
+offset_bottom = 48.0
+theme_override_constants/separation = 6
+
+[node name="BtnRemove" type="Button" parent="Toolbar"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+tooltip_text = "Remove"
+focus_mode = 0
+theme = ExtResource("2_base")
+text = "Remove"
+
+[node name="BtnUp" type="Button" parent="Toolbar"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+tooltip_text = "Bring forward"
+focus_mode = 0
+theme = ExtResource("3_yellow")
+text = "Up"
+
+[node name="BtnDown" type="Button" parent="Toolbar"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+tooltip_text = "Send backward"
+focus_mode = 0
+theme = ExtResource("3_yellow")
+text = "Down"
+
+[connection signal="pressed" from="Toolbar/BtnRemove" to="." method="_on_btn_remove_pressed"]
+[connection signal="pressed" from="Toolbar/BtnUp" to="." method="_on_btn_up_pressed"]
+[connection signal="pressed" from="Toolbar/BtnDown" to="." method="_on_btn_down_pressed"]

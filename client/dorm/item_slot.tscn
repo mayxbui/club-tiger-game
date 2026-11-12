@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://385lemocmkj7"]
+
+[ext_resource type="Theme" uid="uid://d1v4psbppwist" path="res://client/assets/tooltip.tres" id="1_gsgeh"]
+[ext_resource type="Script" uid="uid://3y1w0f3grw11" path="res://client/dorm/item_slot.gd" id="1_slot"]
+[ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="2_medium"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_box"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.9098039, 0.65882355, 0.2901961, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_count"]
+content_margin_left = 6.0
+content_margin_right = 6.0
+bg_color = Color(0.11, 0.11, 0.11, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="ItemSlot" type="PanelContainer" unique_id=1049771595]
+custom_minimum_size = Vector2(110, 110)
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = ExtResource("1_gsgeh")
+theme_override_styles/panel = SubResource("StyleBoxFlat_box")
+script = ExtResource("1_slot")
+
+[node name="Picture" type="TextureRect" parent="." unique_id=679700396]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LabelCount" type="Label" parent="." unique_id=1972435566]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_medium")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_count")
+text = "0"
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]

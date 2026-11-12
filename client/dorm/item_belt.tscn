@@ -1,0 +1,153 @@
+[gd_scene format=3 uid="uid://xdh68hni2d1j"]
+
+[ext_resource type="Script" uid="uid://dpi6kr8wobatf" path="res://client/dorm/item_belt.gd" id="1_belt"]
+[ext_resource type="Theme" uid="uid://1d8kr2ebnkqb" path="res://client/assets/base-theme.tres" id="2_base"]
+[ext_resource type="Theme" uid="uid://dfungdn576rvd" path="res://client/assets/sub-theme-2.tres" id="3_yellow"]
+[ext_resource type="Theme" uid="uid://cry0ofe88mrqq" path="res://client/assets/sub-theme.tres" id="4_white"]
+[ext_resource type="FontFile" uid="uid://yyijoq0wsu80" path="res://client/assets/fonts/Inter/static/Inter_24pt-Medium.ttf" id="5_medium"]
+[ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="6_ribeye"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_belt"]
+content_margin_left = 24.0
+content_margin_top = 16.0
+content_margin_right = 24.0
+content_margin_bottom = 16.0
+bg_color = Color(1, 0.97, 0.9, 0.97)
+border_width_top = 4
+border_color = Color(0.9098039, 0.65882355, 0.2901961, 1)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_tabs"]
+
+[node name="ItemBelt" type="PanelContainer" unique_id=1322210529]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -250.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_belt")
+script = ExtResource("1_belt")
+
+[node name="HBox" type="HBoxContainer" parent="." unique_id=64513607]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Left" type="VBoxContainer" parent="HBox" unique_id=606479005]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LabelTitle" type="Label" parent="HBox/Left" unique_id=73671272]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("6_ribeye")
+theme_override_font_sizes/font_size = 30
+text = "Decorate"
+
+[node name="SearchBar" type="LineEdit" parent="HBox/Left" unique_id=1624948852]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme = ExtResource("2_base")
+placeholder_text = "Search items"
+max_length = 32
+clear_button_enabled = true
+
+[node name="LabelNotice" type="Label" parent="HBox/Left" unique_id=1777856848]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.35, 1)
+theme_override_fonts/font = ExtResource("5_medium")
+theme_override_font_sizes/font_size = 18
+autowrap_mode = 3
+
+[node name="LabelEmpty" type="Label" parent="HBox/Left" unique_id=1796229422]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.35, 0.35, 1)
+theme_override_fonts/font = ExtResource("5_medium")
+theme_override_font_sizes/font_size = 18
+text = "No items here yet."
+
+[node name="Middle" type="VBoxContainer" parent="HBox" unique_id=1264206943]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="Tabs" type="HBoxContainer" parent="HBox/Middle" unique_id=1561973298]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BtnAll" type="Button" parent="HBox/Middle/Tabs" unique_id=1317298059]
+custom_minimum_size = Vector2(120, 44)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("3_yellow")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_tabs")
+text = "All"
+
+[node name="BtnFurniture" type="Button" parent="HBox/Middle/Tabs" unique_id=1905942814]
+custom_minimum_size = Vector2(120, 44)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("3_yellow")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tabs")
+text = "Furniture"
+
+[node name="BtnDecoration" type="Button" parent="HBox/Middle/Tabs" unique_id=29122366]
+custom_minimum_size = Vector2(120, 44)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("3_yellow")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tabs")
+text = "Decoration"
+
+[node name="BtnPlant" type="Button" parent="HBox/Middle/Tabs" unique_id=1954243586]
+custom_minimum_size = Vector2(120, 44)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("3_yellow")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_tabs")
+text = "Plant"
+
+[node name="Scroll" type="ScrollContainer" parent="HBox/Middle" unique_id=437646716]
+custom_minimum_size = Vector2(0, 130)
+layout_mode = 2
+size_flags_vertical = 3
+vertical_scroll_mode = 0
+
+[node name="Slots" type="HBoxContainer" parent="HBox/Middle/Scroll" unique_id=1059030040]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Right" type="VBoxContainer" parent="HBox" unique_id=1753167347]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="BtnSave" type="Button" parent="HBox/Right" unique_id=859520475]
+custom_minimum_size = Vector2(170, 62)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("3_yellow")
+text = "Save"
+
+[node name="BtnCancel" type="Button" parent="HBox/Right" unique_id=473926507]
+custom_minimum_size = Vector2(170, 62)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("4_white")
+text = "Cancel"
+
+[connection signal="text_changed" from="HBox/Left/SearchBar" to="." method="_on_search_bar_text_changed"]
+[connection signal="pressed" from="HBox/Middle/Tabs/BtnAll" to="." method="_on_category_pressed" binds= ["all"]]
+[connection signal="pressed" from="HBox/Middle/Tabs/BtnFurniture" to="." method="_on_category_pressed" binds= ["furniture"]]
+[connection signal="pressed" from="HBox/Middle/Tabs/BtnDecoration" to="." method="_on_category_pressed" binds= ["decoration"]]
+[connection signal="pressed" from="HBox/Middle/Tabs/BtnPlant" to="." method="_on_category_pressed" binds= ["plant"]]
+[connection signal="pressed" from="HBox/Right/BtnSave" to="." method="_on_btn_save_pressed"]
+[connection signal="pressed" from="HBox/Right/BtnCancel" to="." method="_on_btn_cancel_pressed"]

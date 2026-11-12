@@ -5,7 +5,7 @@ extends HBoxContainer
 # Friends, Requests and Blocked pages and by the search pop-up, so every list looks the same.
 #
 # kind decides the status text and buttons (the action names are what action_pressed sends):
-#   "friend"        Online/Offline     Visit (disabled until dorms, #12), Unfriend -> "unfriend", Star -> "star"/"unstar",
+#   "friend"        Online/Offline     Visit -> "visit" (their dorm), Unfriend -> "unfriend", Star -> "star"/"unstar",
 #                                      Block -> "block"
 #   "incoming"      wants to be friends    Add -> "accept", Nope -> "decline"
 #   "outgoing"      request sent           (no buttons)
@@ -22,10 +22,14 @@ const DARK_THEME := preload("res://client/assets/base-theme.tres")
 # The person this row shows (one entry from friends_list_result or search_users_result).
 var info: Dictionary = {}
 
-@onready var avatar: PlayerSkeleton = $Avatar
-@onready var label_name: Label = $Info/LabelName
-@onready var label_status: Label = $Info/LabelStatus
+@onready var avatar: PlayerSkeleton = $Identity/Avatar
+@onready var label_name: Label = $Identity/Info/LabelName
+@onready var label_status: Label = $Identity/Info/LabelStatus
 @onready var actions: HBoxContainer = $Actions
+@onready var friend_actions: VBoxContainer = $FriendActions
+@onready var visit_actions: HBoxContainer = $FriendActions/Visit
+@onready var manage_actions: HBoxContainer = $FriendActions/Manage
+@onready var favorite: CenterContainer = $Favorite
 
 
 # Fills the row for one person and builds the buttons for this kind of list (see the table at the top).
@@ -35,21 +39,26 @@ func setup(person: Dictionary, kind: String) -> void:
 	info = person
 	avatar.apply_character(person.get("character", {}))
 	label_name.text = str(person.get("username", ""))
-	for child in actions.get_children():
-		child.queue_free()
+	var is_friend := kind == "friend"
+	actions.visible = not is_friend
+	friend_actions.visible = is_friend
+	favorite.visible = is_friend
+	for container in [actions, visit_actions, manage_actions, favorite]:
+		for child in container.get_children():
+			container.remove_child(child)
+			child.queue_free()
 
 	match kind:
 		"friend":
 			label_status.text = "Online" if person.get("online", false) else "Offline"
-			var visit := _add_button("Visit", "visit", YELLOW_THEME)
-			visit.disabled = true
-			visit.tooltip_text = "Dorm visits are coming soon."
-			_add_button("Unfriend", "unfriend", DARK_THEME)
+			var visit := _add_button("Visit", "visit", YELLOW_THEME, visit_actions)
+			visit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			_add_button("Unfriend", "unfriend", DARK_THEME, manage_actions)
+			_add_button("Block", "block", DARK_THEME, manage_actions)
 			if person.get("starred", false):
-				_add_button("Starred", "unstar", YELLOW_THEME)
+				_add_button("Starred", "unstar", YELLOW_THEME, favorite)
 			else:
-				_add_button("Star", "star", DARK_THEME)
-			_add_button("Block", "block", DARK_THEME)
+				_add_button("Star", "star", DARK_THEME, favorite)
 		"incoming":
 			label_status.text = "wants to be friends"
 			_add_button("Add", "accept", YELLOW_THEME)
@@ -83,12 +92,16 @@ func _relation_text(relation: String) -> String:
 	return ""
 
 
-# Adds one button to the right side; pressing it sends action_pressed(action, info).
-func _add_button(text: String, action: String, button_theme: Theme) -> Button:
+# Adds a button to its action column and forwards presses with the player's info.
+func _add_button(text: String, action: String, button_theme: Theme, target: Container = null) -> Button:
 	var button := Button.new()
 	button.text = text
 	button.theme = button_theme
 	button.focus_mode = Control.FOCUS_NONE
 	button.pressed.connect(func(): action_pressed.emit(action, info))
-	actions.add_child(button)
+	if target != null:
+		button.add_theme_font_size_override("font_size", 16)
+		target.add_child(button)
+	else:
+		actions.add_child(button)
 	return button

@@ -1,10 +1,10 @@
 extends CharacterBody2D
 
-# Another player's character was left-clicked (only after set_clickable(true); world_map.gd opens the
+# Another player's character was left-clicked (only after set_clickable(true); room.gd opens the
 # other-player card).
 signal clicked
 
-# True only for this client's own player (set by world_map.gd); other players' copies leave it false.
+# True only for this client's own player (set by room.gd); other players' copies leave it false.
 @export var is_local := false
 
 @export var SPEED := 300.0
@@ -80,7 +80,7 @@ func change_eyes(id: int) -> void:
 func set_username(username: String) -> void:
 	$LabelUsername.text = username
 
-# Turns clicking on this character on or off. world_map.gd turns it on for other players only, so clicking your
+# Turns clicking on this character on or off. room.gd turns it on for other players only, so clicking your
 # own character still walks you there. While on, ClickArea takes the click, so it doesn't also walk you to them.
 func set_clickable(on: bool) -> void:
 	$ClickArea.mouse_filter = Control.MOUSE_FILTER_STOP if on else Control.MOUSE_FILTER_IGNORE

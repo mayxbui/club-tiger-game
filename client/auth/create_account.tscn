@@ -51,8 +51,7 @@ texture = ExtResource("11_s26im")
 script = ExtResource("1_create_account")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=771308047]
-position = Vector2(961, 543)
-scale = Vector2(1, 1.02476)
+position = Vector2(967, 536)
 texture = ExtResource("2_iycys")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1886825673]
@@ -104,24 +103,24 @@ offset_bottom = 888.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_172lf")
 
 [node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/OuterPanel/CharacterPanel" unique_id=1115892499]
-position = Vector2(277.99997, 299.99997)
+position = Vector2(281.8326, 265.929)
 scale = Vector2(0.6394422, 0.8109902)
 texture = ExtResource("4_sslf2")
 
 [node name="CharacterCustomizer" parent="CanvasLayer/OuterPanel/CharacterPanel" unique_id=1238502484 instance=ExtResource("3_hxtys")]
 layout_mode = 1
-offset_left = 459.0
-offset_top = 19.0
-offset_right = 28.0
-offset_bottom = -64.0
+offset_left = 462.83264
+offset_top = -15.070984
+offset_right = 31.832642
+offset_bottom = -98.070984
 scale = Vector2(0.9973775, 1)
 
 [node name="InputUsername" type="LineEdit" parent="CanvasLayer/OuterPanel/CharacterPanel" unique_id=1036643844]
 layout_mode = 0
-offset_left = 98.0
-offset_top = 600.0
-offset_right = 451.0
-offset_bottom = 673.0
+offset_left = 101.83264
+offset_top = 565.929
+offset_right = 454.83264
+offset_bottom = 638.929
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_placeholder_color = Color(0.15693116, 0.15693155, 0.15693125, 0.6)
 theme_override_fonts/font = ExtResource("10_s26im")
@@ -134,14 +133,14 @@ backspace_deletes_composite_character_enabled = true
 clear_button_enabled = true
 
 [node name="Player" parent="CanvasLayer/OuterPanel/CharacterPanel" unique_id=1571350742 instance=ExtResource("2_cwpj5")]
-position = Vector2(276, 267.99997)
+position = Vector2(285, 248.99997)
 
 [node name="InputEmail" type="LineEdit" parent="CanvasLayer/OuterPanel" unique_id=1315285249]
 layout_mode = 0
-offset_left = 1165.0
-offset_top = 294.0
-offset_right = 1585.0
-offset_bottom = 377.0
+offset_left = 1168.8326
+offset_top = 259.92902
+offset_right = 1588.8326
+offset_bottom = 342.92902
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.6)
 theme_override_fonts/font = ExtResource("10_s26im")
@@ -154,10 +153,10 @@ clear_button_enabled = true
 
 [node name="InputPassword" type="LineEdit" parent="CanvasLayer/OuterPanel" unique_id=634910586]
 layout_mode = 0
-offset_left = 1165.0
-offset_top = 384.0
-offset_right = 1585.0
-offset_bottom = 458.0
+offset_left = 1168.8326
+offset_top = 349.92902
+offset_right = 1588.8326
+offset_bottom = 423.92902
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_placeholder_color = Color(0.0739884, 0.073988624, 0.073988445, 0.6)
 theme_override_fonts/font = ExtResource("10_s26im")
@@ -171,10 +170,10 @@ secret = true
 
 [node name="CheckShowPassword" type="CheckBox" parent="CanvasLayer/OuterPanel" unique_id=1706277251]
 layout_mode = 0
-offset_left = 1194.0
-offset_top = 470.0
-offset_right = 1429.0
-offset_bottom = 506.0
+offset_left = 1197.8326
+offset_top = 435.92902
+offset_right = 1432.8326
+offset_bottom = 471.92902
 focus_mode = 0
 theme_override_colors/font_color = Color(0.19215687, 0.18039216, 0.1764706, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
@@ -186,10 +185,10 @@ text = "Show password"
 
 [node name="BtnCreate" type="Button" parent="CanvasLayer/OuterPanel" unique_id=800347633]
 layout_mode = 0
-offset_left = 1176.0
-offset_top = 518.0
-offset_right = 1596.0
-offset_bottom = 587.3719
+offset_left = 1178.0
+offset_top = 497.0
+offset_right = 1598.0
+offset_bottom = 566.3719
 scale = Vector2(1, 1.009054)
 theme_override_colors/font_color = Color(0.99567145, 0.8987797, 0.5378617, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
@@ -204,10 +203,10 @@ text = "Create an account"
 
 [node name="BtnLogin" type="Button" parent="CanvasLayer/OuterPanel" unique_id=870284456]
 layout_mode = 0
-offset_left = 1217.0
-offset_top = 609.0
-offset_right = 1550.0
-offset_bottom = 649.0
+offset_left = 1220.8326
+offset_top = 574.929
+offset_right = 1553.8326
+offset_bottom = 614.929
 theme_override_colors/font_color = Color(0.24322435, 0.24322438, 0.24322438, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)

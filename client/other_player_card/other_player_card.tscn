@@ -111,7 +111,7 @@ text = "Block"
 [node name="BtnVisit" type="Button" parent="Card/Page/VBox/Buttons" unique_id=1160576548]
 custom_minimum_size = Vector2(150, 70)
 layout_mode = 2
-tooltip_text = "Dorm visits are coming soon."
+tooltip_text = "Visit their dorm (friends only)"
 focus_mode = 0
 theme = ExtResource("9_base")
 theme_override_font_sizes/font_size = 28

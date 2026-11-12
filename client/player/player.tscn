@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c7rpucjuj667a" path="res://client/player/player.gd" id="1_3qdwu"]
 [ext_resource type="PackedScene" uid="uid://c8ipe7ahbtqpj" path="res://client/player/player_skeleton.tscn" id="2_skel"]
-[ext_resource type="FontFile" uid="uid://bsalahsy1ev2h" path="res://client/assets/fonts/Ribeye/Ribeye-Regular.ttf" id="5_172lf"]
+[ext_resource type="FontFile" uid="uid://di6xi2kcaanc" path="res://client/assets/fonts/Inter/static/Inter_28pt-Bold.ttf" id="3_ee1sm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ee1sm"]
 size = Vector2(187, 99)
@@ -10,9 +10,11 @@ size = Vector2(187, 99)
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_iycys"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_vmchv"]
-font = ExtResource("5_172lf")
-font_size = 30
-font_color = Color(0, 0, 0, 1)
+font = ExtResource("3_ee1sm")
+font_size = 55
+outline_size = 20
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 30
 
 [node name="Player" type="CharacterBody2D" unique_id=1159748652]
 collision_layer = 2
@@ -24,7 +26,7 @@ shape = SubResource("RectangleShape2D_ee1sm")
 
 [node name="Skeleton" parent="." unique_id=749264483 instance=ExtResource("2_skel")]
 
-[node name="ClickArea" type="Control" parent="."]
+[node name="ClickArea" type="Control" parent="." unique_id=1626279640]
 layout_mode = 3
 anchors_preset = 0
 offset_left = -120.0
@@ -35,16 +37,16 @@ mouse_filter = 2
 mouse_default_cursor_shape = 2
 
 [node name="LabelUsername" type="Label" parent="." unique_id=1046048194]
-offset_left = -83.0
-offset_top = 220.0
-offset_right = 96.0
-offset_bottom = 262.0
+offset_left = -151.0
+offset_top = 205.0
+offset_right = 172.0
+offset_bottom = 290.0
 theme_override_constants/shadow_outline_size = 4
 theme_override_styles/normal = SubResource("StyleBoxEmpty_iycys")
 text = "username"
 label_settings = SubResource("LabelSettings_vmchv")
 horizontal_alignment = 1
-autowrap_mode = 3
+vertical_alignment = 1
 
 [node name="Bubbles" type="VBoxContainer" parent="." unique_id=758497292]
 z_index = 10

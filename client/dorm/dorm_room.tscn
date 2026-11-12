@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://bnvu3tc73spqg"]
+
+[ext_resource type="Script" uid="uid://cxaei171vuq8i" path="res://client/dorm/dorm_room.gd" id="1_dorm"]
+[ext_resource type="Texture2D" uid="uid://bag07oc22dtc2" path="res://client/assets/dorm/Club_Tiger.png" id="2_room"]
+[ext_resource type="PackedScene" uid="uid://dhd56c0gjjps" path="res://client/player/player.tscn" id="3_player"]
+[ext_resource type="PackedScene" uid="uid://dcmy3jrqo14g6" path="res://client/ui/hud.tscn" id="4_hud"]
+[ext_resource type="PackedScene" uid="uid://xdh68hni2d1j" path="res://client/dorm/item_belt.tscn" id="5_belt"]
+
+[node name="DormRoom" type="Node2D" unique_id=1622082751]
+script = ExtResource("1_dorm")
+
+[node name="Room" type="Sprite2D" parent="." unique_id=236230986]
+texture = ExtResource("2_room")
+centered = false
+metadata/_edit_lock_ = true
+
+[node name="Items" type="Node2D" parent="." unique_id=612177997]
+
+[node name="Players" type="Node2D" parent="." unique_id=1124078737]
+y_sort_enabled = true
+
+[node name="Player" parent="Players" unique_id=1328900874 instance=ExtResource("3_player")]
+position = Vector2(115, 640)
+scale = Vector2(0.6, 0.6)
+
+[node name="Walkable" type="Polygon2D" parent="." unique_id=833510078]
+visible = false
+polygon = PackedVector2Array(60, 580, 1700, 580, 1700, 920, 60, 920)
+
+[node name="HUD" parent="." unique_id=1588181545 instance=ExtResource("4_hud")]
+place_text = "Map"
+
+[node name="EditLayer" type="CanvasLayer" parent="." unique_id=1956892716]
+
+[node name="ItemBelt" parent="EditLayer" unique_id=1698261751 instance=ExtResource("5_belt")]
+
+[connection signal="edit_pressed" from="HUD" to="." method="_on_hud_edit_pressed"]
+[connection signal="place_pressed" from="HUD" to="." method="_on_hud_place_pressed"]
+[connection signal="cancel_pressed" from="EditLayer/ItemBelt" to="." method="_on_item_belt_cancel_pressed"]
+[connection signal="item_chosen" from="EditLayer/ItemBelt" to="." method="_on_item_belt_item_chosen"]
+[connection signal="save_pressed" from="EditLayer/ItemBelt" to="." method="_on_item_belt_save_pressed"]
