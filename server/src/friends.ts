@@ -358,6 +358,18 @@ export async function blockedWith(userId: number): Promise<Set<number>> {
     return new Set(result.rows.map((row) => (row.blocker_id === userId ? row.blocked_id : row.blocker_id)));
 }
 
+// True if two players are accepted friends and neither blocked the other (dorm.ts: only they can visit each other's
+// dorm), also deletes the friendship
+export async function areFriends(a: number, b: number): Promise<boolean> {
+    const result = await pool.query(
+        `SELECT 1 FROM friendships WHERE status = 'accepted' AND ${PAIR}
+            AND NOT EXISTS (SELECT 1 FROM blocks WHERE (blocker_id = $1 AND blocked_id = $2)
+                                                  OR (blocker_id = $2 AND blocked_id = $1))`,
+        [a, b]
+    );
+    return result.rows.length > 0;
+}
+
 // Rate limit for search_users (the client sends it while the player types): at most 10 per 5 seconds per player
 const MAX_SEARCHES = 10;
 const RATE_SEARCH = 5 * 1000;

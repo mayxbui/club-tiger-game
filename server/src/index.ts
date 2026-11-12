@@ -8,6 +8,7 @@ import { handleChat } from "./chat.js";
 import { getFriendsList, respondToRequest, sendFriendRequest, unfriend, starFriend, blockUser, unblockUser,
     searchUsers, blockedWith, getPlayerInfo } from "./friends.js";
 import { updateProfile } from "./profile.js";
+import { enterDorm, saveDorm } from "./dorm.js";
 
 // Initialize the WebSocket server
 const PORT = Number(process.env.PORT ?? 3103);
@@ -313,6 +314,22 @@ wsServer.on("connection", (socket) => {
                     const userId = socketUsers.get(socket);
                     if (!userId) { send(socket, { type: "error", error: "Please sign in." }); break; }
                     await updateProfile(socket, userId, message.username, message.character);
+                    break;
+                }
+
+                // Spawn player into their own or friend's dorm
+                case "enter_dorm": {
+                    const userId = socketUsers.get(socket);
+                    if (!userId) { send(socket, { type: "error", error: "Please sign in." }); break; }
+                    await enterDorm(socket, userId, message.ownerId, await getUserProfile(userId));
+                    break;
+                }
+
+                // Saves the dorm layout
+                case "save_dorm": {
+                    const userId = socketUsers.get(socket);
+                    if (!userId) { send(socket, { type: "error", error: "Please sign in." }); break; }
+                    await saveDorm(socket, userId, message.items);
                     break;
                 }
 
